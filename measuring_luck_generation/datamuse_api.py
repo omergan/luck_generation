@@ -1,6 +1,5 @@
-from datamuse import datamuse
+import datamuse
 import numpy as np
-import enums
 
 api = datamuse.Datamuse()
 api.set_max_default(1000)

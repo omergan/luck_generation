@@ -1,10 +1,9 @@
-import datamuse_api as datamuse
+from measuring_luck_generation import datamuse_api as datamuse
 import scraper as scraper
-import enums
 import csv
 
 if __name__ == '__main__':
-    set_generated = datamuse.generate_set("find job", enums.Strength.weak)
+    set_generated = datamuse.generate_set("find job", 0)
     tweets = scraper.get_random_tweets()
     with open('tweets.csv', mode='a') as tweets_file:
         fieldnames = ['screen_name', 'username', 'tweet']
