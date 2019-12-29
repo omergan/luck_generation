@@ -1,4 +1,4 @@
-# luck_generation_from_weak_ties
+# Final project
 # requirments
 
 https://github.com/bisguzar/twitter-scraper
