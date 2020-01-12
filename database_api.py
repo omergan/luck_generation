@@ -26,10 +26,10 @@ def get_all_followers_by_username(user_name):
     return followers
 
 
-def username_to_id(username):
+def username_to_id(user_name):
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
-    t = (username, )
+    t = (user_name, )
     for row in cursor.execute('SELECT id FROM users WHERE username =?', t):
         id = row[0]
     conn.close()
