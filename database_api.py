@@ -1,8 +1,11 @@
 import sqlite3
 import os
 
+USER_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.db"
+TWEETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/tweets.db"
+
 def get_all_tweets_by_username(user_name):
-    conn = sqlite3.connect(os.path.dirname(os.path.realpath(__file__)) + "/datasets/tweets.db")
+    conn = sqlite3.connect(TWEETS_DATABASE)
     cursor = conn.cursor()
     t = (user_name, )
     tweets = []
@@ -13,7 +16,7 @@ def get_all_tweets_by_username(user_name):
 
 
 def get_all_followers_by_username(user_name):
-    conn = sqlite3.connect(os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.db")
+    conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
     id = (username_to_id(user_name), )
     followers = []
@@ -24,11 +27,10 @@ def get_all_followers_by_username(user_name):
 
 
 def username_to_id(username):
-    conn = sqlite3.connect(os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.db")
+    conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
     t = (username, )
-    id = []
     for row in cursor.execute('SELECT id FROM users WHERE username =?', t):
-        id.append(row[0])
+        id = row[0]
     conn.close()
     return id

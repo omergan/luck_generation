@@ -1,6 +1,7 @@
 # Final project
-# requirments
+# Requirments
 
-https://github.com/bisguzar/twitter-scraper
+* Twint
+> pip install twint
 
-https://github.com/taspinar/twitterscraper
+* Python SQLite3
