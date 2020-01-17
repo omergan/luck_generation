@@ -3,6 +3,28 @@ import os
 
 USER_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.db"
 TWEETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/tweets.db"
+SETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/sets.db"
+
+def insert_datamuse_set(context, set, strength):
+    conn = sqlite3.connect(SETS_DATABASE)
+    cursor = conn.cursor()
+    new_set = ";".join([x['word'] for x in set])
+    params = (strength, context, new_set,)
+    sql = 'REPLACE INTO sets(context,"{}") VALUES("{}","{}")'.format(*params)
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+
+def get_datamuse_set(context, strength):
+    conn = sqlite3.connect(SETS_DATABASE)
+    cursor = conn.cursor()
+    params = (context,)
+    set = []
+    for row in cursor.execute('SELECT * FROM sets where context = ?', params):
+        set.append(row[strength])
+    conn.close()
+    return set
+
 
 def get_all_tweets_by_username(user_name):
     conn = sqlite3.connect(TWEETS_DATABASE)
@@ -34,3 +56,31 @@ def username_to_id(user_name):
         id = row[0]
     conn.close()
     return id
+
+def get_all_tweets_by_context(context):
+    conn = sqlite3.connect(TWEETS_DATABASE)
+    cursor = conn.cursor()
+    tweets = []
+    added_ids = []
+    for term in context.split(" "):
+        t = ('%' + term + '%',)
+        for row in cursor.execute('SELECT * FROM tweets WHERE tweet LIKE ?', t):
+            if row[0] not in added_ids:
+                added_ids.append(row[0])
+                tweets.append(row)
+    conn.close()
+    return tweets
+
+def get_all_users_by_context(context):
+    conn = sqlite3.connect(TWEETS_DATABASE)
+    cursor = conn.cursor()
+    screen_names = []
+    for term in context.split(" "):
+        t = ('%' + term + '%',)
+        for row in cursor.execute('SELECT * FROM tweets WHERE tweet LIKE ?', t):
+            if row[14] not in screen_names:
+                screen_names.append(row[14])
+    conn.close()
+    return screen_names
+
+
