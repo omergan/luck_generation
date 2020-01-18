@@ -2,14 +2,16 @@ import twint
 USERS_DATABASE = "datasets/users.db"
 TWEETS_DATABASE = "datasets/tweets.db"
 
-def get_followers(userName, limit):
+def get_followers(user_id, limit):
     c = twint.Config()
-    c.Username = userName
+    c.User_id = user_id
+    c.Store_object = True
     c.Database = USERS_DATABASE
     c.Limit = limit
     c.User_full = True
-    followers = twint.run.Followers(c)
-    return followers
+    # c.Hide_output = True
+    twint.run.Followers(c)
+    return twint.output.users_list
 
 def get_tweets(subject, limit):
     c = twint.Config()

@@ -22,10 +22,13 @@ def generating_luck(user, context):
     # Dictionary [{username, strong tie score, weak tie score}] of candidate and their score
     ranking = []
 
+    strong_tie_score = measure_tie_strength.measure_tie_strength(user, candidates[0], strong_keywords, context)
+    logging.info(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {candidates[0]}')
+
     # Create queue with strong measured
-    for candidate in candidates:
-        strong_tie_score = measure_tie_strength.measure_tie_strength(user, candidate, strong_keywords, context)
-        logging.info(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {candidate}')
+    # for candidate in candidates:
+    #     strong_tie_score = measure_tie_strength.measure_tie_strength(user, candidate, strong_keywords, context)
+    #     logging.info(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {candidate}')
 
     # Create queue with weak measured
     # for candidate in candidates:
