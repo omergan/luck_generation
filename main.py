@@ -1,14 +1,6 @@
-import database_api
+from measuring_luck_generation import generating_luck
 import twint_api
-from measuring_luck_generation import datamuse_api as datamuse
 
-
-
-
-    # strong_measured = measure_tie_strength(self, candidate, keywords, context)
-    # candidates_with_strengthes("user_name", "score")
-
-
-# tweets_by_context = database_api.get_all_tweets_by_context('software engineering job')
-# candidates = {x[14]: x[12] for x in tweets_by_context}
-# (self, candidate, keywords, context)
+followers = twint_api.get_followers("1212035324102111238", 100)
+print(followers)
+# generating_luck.generating_luck(1325385696, "software engineering job")
