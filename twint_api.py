@@ -33,3 +33,10 @@ def get_profile_by_username(user_name):
     c.Database = USERS_DATABASE
     profile = twint.run.Lookup(c)
     return profile
+
+def get_favorites_by_username(user_name):
+    c = twint.Config()
+    c.Username = user_name
+    c.Database = TWEETS_DATABASE
+    favorites = twint.run.Favorites(c)
+    return favorites
