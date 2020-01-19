@@ -36,26 +36,45 @@ def get_all_tweets_by_username(user_name):
     conn.close()
     return tweets
 
-
-def get_all_followers_by_username(user_name):
+def get_all_followers(user_id):
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
-    id = (username_to_id(user_name), )
+    id = (user_id, )
     followers = []
     for row in cursor.execute('SELECT follower_id FROM followers WHERE id=?', id):
         followers.append(row[0])
     conn.close()
     return followers
 
+def get_all_following(user_id):
+    conn = sqlite3.connect(USER_DATABASE)
+    cursor = conn.cursor()
+    id = (user_id, )
+    following = []
+    for row in cursor.execute('SELECT following_id FROM following WHERE id=?', id):
+        following.append(row[0])
+    conn.close()
+    return following
 
 def username_to_id(user_name):
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
     t = (user_name, )
+    id = None
     for row in cursor.execute('SELECT id FROM users WHERE username =?', t):
         id = row[0]
     conn.close()
     return id
+
+def get_profile(user_id):
+    conn = sqlite3.connect(USER_DATABASE)
+    cursor = conn.cursor()
+    t = (user_id, )
+    profile = None
+    for row in cursor.execute('SELECT * FROM users WHERE id =?', t):
+        profile = row
+    conn.close()
+    return profile
 
 def get_all_tweets_by_context(context):
     conn = sqlite3.connect(TWEETS_DATABASE)
