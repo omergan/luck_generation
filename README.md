@@ -1,4 +1,4 @@
-# Final project
+# Generating Luck Using Weak Ties in Social Networks
 
 ## TSM Tool
 The TSM (Tie Strength Measurement) Tool is a tool created in order to measure the strength of a relation between 2 people in a social network. TSM Tool is based data from twitter.
