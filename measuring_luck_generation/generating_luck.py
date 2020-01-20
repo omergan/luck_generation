@@ -27,9 +27,9 @@ class LuckGenerator:
         # Dictionary [{username, strong tie score, weak tie score}] of candidate and their score
         ranking = []
 
-        tie_strength_tool = tsm.TieStrengthTool()
-        strong_tie_score = tie_strength_tool.measure_tie_strength(user, "williamsb504", strong_keywords, context)
-        logger.luck(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {"williamsb504"}')
+        tie_strength_tool = tsm.TieStrengthTool(is_online=True)
+        strong_tie_score = tie_strength_tool.measure_tie_strength(user, "ResilientWalker", strong_keywords, context)
+        logger.luck(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {"ResilientWalker"}')
         return strong_tie_score
         # Create queue with strong measured
         # for candidate in candidates:

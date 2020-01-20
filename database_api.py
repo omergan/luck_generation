@@ -36,6 +36,8 @@ def get_all_tweets_by_username(user_name):
     conn.close()
     return tweets
 
+
+# TODO : Join from both followers and following tables
 def get_all_followers(user_id):
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
@@ -46,6 +48,7 @@ def get_all_followers(user_id):
     conn.close()
     return followers
 
+# TODO : Join from both followers and following tables
 def get_all_following(user_id):
     conn = sqlite3.connect(USER_DATABASE)
     cursor = conn.cursor()
