@@ -8,7 +8,7 @@ logger = Logger()
 if __name__ == '__main__':
     logger.debug("Starting main program!")
 
-    luck_generator = LG.LuckGenerator()
+    luck_generator = LG.LuckGenerator(is_online=False)
     print(luck_generator.generating_luck("MizrahiMichael", "software engineering job"))
 
     logger.debug("Ending main program!")

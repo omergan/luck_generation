@@ -30,17 +30,17 @@ class TieStrengthTool:
     def likeness(self, user_id, user, candidate_id, candidate, context):
 
         # Common Favourites
-        # if self.online:
-        #     all_favorites = twint_api.get_favorites_by_username(user, 10)
-        #
-        # favorites = filter(lambda x: x.id == candidate_id, all_favorites)
+        if self.online:
+            all_favorites = twint_api.get_favorites_by_username(user, 10)
+
+        favorites = filter(lambda x: x.id == candidate_id, all_favorites)
 
         # Common Retweets
         if self.online:
             all_retweets = twint_api.get_retweets_by_username(user, user_id, 5)
         # Common Replies
 
-        return 0
+        return len(favorites)
 
     def communication(self, user_id, target_id, context):
 
