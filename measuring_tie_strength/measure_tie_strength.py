@@ -25,7 +25,7 @@ class TieStrengthTool:
         topology_score = self.topology(user_id, candidate_id) + self.topology(candidate_id, user_id)
         communication_score = self.communication(user_id, candidate_id, context)
         likeness_score = self.likeness(user_id, candidate_id, context)
-        return topology_score * communication_score * likeness_score
+        return topology_score
 
     def likeness(self, user_id, target_id, context):
 
