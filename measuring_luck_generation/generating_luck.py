@@ -28,8 +28,8 @@ class LuckGenerator:
         ranking = []
 
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online)
-        strong_tie_score = tie_strength_tool.measure_tie_strength(user, "ResilientWalker", strong_keywords, context)
-        logger.luck(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {"ResilientWalker"}')
+        strong_tie_score = tie_strength_tool.measure_tie_strength(user, "accelerator_ffm", strong_keywords, context)
+        logger.luck(f'Measure tie strength for strong connection return : {strong_tie_score} for candidate {"accelerator_ffm"}')
         return strong_tie_score
         # Create queue with strong measured
         # for candidate in candidates:

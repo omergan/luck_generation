@@ -13,9 +13,9 @@ class TieStrengthTool:
         # likeness
         # Topology
         # Comms
-        if self.online:
-            twint_api.get_profile_by_username(candidate)
-            twint_api.get_profile_by_username(user)
+        # if self.online:
+        #     twint_api.get_profile_by_username(candidate)
+        #     twint_api.get_profile_by_username(user)
 
         candidate_id = database_api.username_to_id(candidate)
         user_id = database_api.username_to_id(user)
@@ -23,26 +23,37 @@ class TieStrengthTool:
 
         # TODO : code below is placeholder
         # topology_score = self.topology(user_id, candidate_id) + self.topology(candidate_id, user_id)
-        communication_score = self.communication(user_id, candidate_id, context)
-        likeness_score = self.likeness(user_id, user, candidate_id, candidate, context)
-        return likeness_score
+        likeness_score = self.likeness(user_id, candidate_id, context)
+        communication_score = self.communication(user_id, user, candidate_id, candidate, context)
+        return communication_score
 
-    def likeness(self, user_id, user, candidate_id, candidate, context):
+    def communication(self, user_id, user, candidate_id, candidate, context):
+        logger.tie(f'Calculating communication for {user_id} --> {candidate_id}')
 
-        # Common Favourites
+        # Favourites
         if self.online:
-            all_favorites = twint_api.get_favorites_by_username(user, 10)
+            all_favorites = twint_api.get_favorites_by_username(user, 200)
+        favorites = list(filter(lambda x: x.user_id == candidate_id, all_favorites))
 
-        favorites = filter(lambda x: x.id == candidate_id, all_favorites)
-
-        # Common Retweets
         if self.online:
-            all_retweets = twint_api.get_retweets_by_username(user, user_id, 5)
-        # Common Replies
+            all_tweets = twint_api.get_tweets_from_timeline(user, 200)
 
-        return len(favorites)
+        # Retweets
+        all_retweets = list(filter(lambda x: x.user_id != user_id, all_tweets))
+        retweets = list(filter(lambda x: x.user_id == candidate_id, all_retweets))
 
-    def communication(self, user_id, target_id, context):
+        # Mentions
+        mentioned_in = list(filter(lambda x: x.user_id == user_id and candidate.lower() in x.mentions, all_tweets))
+
+        logger.debug(f'User liked a total of {len(all_favorites)} tweets.')
+        logger.debug(f'User liked {len(favorites)} of candidate tweets.')
+        logger.debug(f'User tweeted a total of {len(all_tweets)} times.')
+        logger.debug(f'User retweeted a total of {len(all_retweets)} times.')
+        logger.debug(f'User retweeted {len(retweets)} of candidate tweets.')
+        logger.debug(f'User mentioned candidate in {len(mentioned_in)} tweets.')
+        return len(mentioned_in)
+
+    def likeness(self, user_id, target_id, context):
 
         # Replies : how many time target_id replied to user_id
         # Retweets : how many time target_id retweeted to user_id
