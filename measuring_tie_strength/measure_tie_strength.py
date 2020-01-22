@@ -13,9 +13,9 @@ class TieStrengthTool:
         # likeness
         # Topology
         # Comms
-        # if self.online:
-        #     twint_api.get_profile_by_username(candidate)
-        #     twint_api.get_profile_by_username(user)
+        if self.online:
+            twint_api.get_profile_by_username(candidate)
+            twint_api.get_profile_by_username(user)
 
         candidate_id = database_api.username_to_id(candidate)
         user_id = database_api.username_to_id(user)
@@ -32,11 +32,11 @@ class TieStrengthTool:
 
         # Favourites
         if self.online:
-            all_favorites = twint_api.get_favorites_by_username(user, 200)
+            all_favorites = twint_api.get_favorites_by_username(user, 20)
         favorites = list(filter(lambda x: x.user_id == candidate_id, all_favorites))
 
         if self.online:
-            all_tweets = twint_api.get_tweets_from_timeline(user, 200)
+            all_tweets = twint_api.get_tweets_from_timeline(user, 20)
 
         # Retweets
         all_retweets = list(filter(lambda x: x.user_id != user_id, all_tweets))

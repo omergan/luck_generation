@@ -5,12 +5,13 @@ USER_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.d
 TWEETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/tweets.db"
 SETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/sets.db"
 
-def insert_datamuse_set(context, set, strength):
+def insert_datamuse_set(context, strong_set, weak_set):
     conn = sqlite3.connect(SETS_DATABASE)
     cursor = conn.cursor()
-    new_set = ";".join([x['word'] for x in set])
-    params = (strength, context, new_set,)
-    sql = 'REPLACE INTO sets(context,"{}") VALUES("{}","{}")'.format(*params)
+    new_strong_set = ";".join([x for x in strong_set])
+    new_weak_set = ";".join([x for x in weak_set])
+    params = (context, new_weak_set, new_strong_set, )
+    sql = 'REPLACE INTO sets(context,weak_set,strong_set) VALUES("{}","{}","{}")'.format(*params)
     cursor.execute(sql)
     conn.commit()
     conn.close()

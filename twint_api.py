@@ -17,6 +17,7 @@ def get_following(user_id, limit):
     c = twint.Config()
     c.User_id = user_id
     c.Store_object = True
+    c.Location = True
     c.Database = USERS_DATABASE
     c.Limit = limit
     c.User_full = True
@@ -24,9 +25,10 @@ def get_following(user_id, limit):
     twint.run.Following(c)
     return twint.output.users_list
 
-def get_tweets(subject, limit):
+def get_tweets(context, limit):
     c = twint.Config()
-    c.Search = subject
+    c.Search = context
+    c.Location = True
     c.Limit = limit
     c.Database = TWEETS_DATABASE
     tweets = twint.run.Search(c)
@@ -35,6 +37,7 @@ def get_tweets(subject, limit):
 def get_tweets_by_username(userName, limit):
     c = twint.Config()
     c.Username = userName
+    c.Location = True
     c.Limit = limit
     c.Database = TWEETS_DATABASE
     tweets = twint.run.Search(c)
