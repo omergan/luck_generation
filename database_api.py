@@ -16,15 +16,17 @@ def insert_datamuse_set(context, strong_set, weak_set):
     conn.commit()
     conn.close()
 
+
 def get_datamuse_set(context, strength):
     conn = sqlite3.connect(SETS_DATABASE)
     cursor = conn.cursor()
-    params = (context,)
+    params = (strength, context,)
     set = []
-    for row in cursor.execute('SELECT * FROM sets where context = ?', params):
-        set.append(row[strength])
+    sql = 'SELECT "{}" FROM sets where context = "{}"'.format(*params)
+    for row in cursor.execute(sql):
+        set.append(row)
     conn.close()
-    return set
+    return set[0][0]
 
 
 def get_all_tweets_by_username(user_name):

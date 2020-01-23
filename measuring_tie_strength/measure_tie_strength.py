@@ -22,10 +22,10 @@ class TieStrengthTool:
 
 
         # TODO : code below is placeholder
-        # topology_score = self.topology(user_id, candidate_id) + self.topology(candidate_id, user_id)
-        likeness_score = self.likeness(user_id, candidate_id, context)
-        communication_score = self.communication(user_id, user, candidate_id, candidate, context)
-        return communication_score
+        topology_score = self.topology(user_id, candidate_id) + self.topology(candidate_id, user_id)
+        # likeness_score = self.likeness(user_id, candidate_id, context)
+        communication_score = self.communication(user_id, user, candidate_id, candidate, context) + self.communication(candidate_id, candidate, user_id, user, context)
+        return communication_score * topology_score
 
     def communication(self, user_id, user, candidate_id, candidate, context):
         logger.tie(f'Calculating communication for {user_id} --> {candidate_id}')
@@ -51,7 +51,7 @@ class TieStrengthTool:
         logger.debug(f'User retweeted a total of {len(all_retweets)} times.')
         logger.debug(f'User retweeted {len(retweets)} of candidate tweets.')
         logger.debug(f'User mentioned candidate in {len(mentioned_in)} tweets.')
-        return len(mentioned_in)
+        return len(mentioned_in + retweets + favorites) / len(all_favorites + all_retweets + mentioned_in)
 
     def likeness(self, user_id, target_id, context):
 
@@ -74,4 +74,4 @@ class TieStrengthTool:
             twint_api.get_following(target_id, 200)
         candidate_following = database_api.get_all_following(target_id)
         intersection = [follower for follower in user_followers if follower in candidate_following]
-        return len(intersection)
+        return len(intersection) / len(user_followers)
