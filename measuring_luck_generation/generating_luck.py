@@ -20,11 +20,12 @@ class LuckGenerator:
         # Get all candidates by context
         candidates = self.get_candidates(context, client_twitter_profile)
 
+        candidates = ['accelerator_ffm']
         # Generate set from datamuse
-        if self.online:
-            weak_set_online = datamuse_api.generate_weak_set(context)
-            strong_set_online = datamuse_api.generate_strong_set(context)
-            self.store_sets(context, strong_set_online, weak_set_online)
+        # if self.online:
+        #     weak_set_online = datamuse_api.generate_weak_set(context)
+        #     strong_set_online = datamuse_api.generate_strong_set(context)
+        #     self.store_sets(context, strong_set_online, weak_set_online)
 
         strong_set = self.generate_strong_set(context)
         weak_set = self.generate_weak_set(context)
@@ -44,17 +45,17 @@ class LuckGenerator:
 
         # Create queue with strong measured
         for candidate in candidates:
-            # strong_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, strong_set, context)
-            strong_ties.append({candidate: 0})
+            strong_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, strong_set, context)
+            strong_ties.append({candidate: strong_tie_score})
 
-        logger.luck(f'Strong ties score : {strong_ties}')
+        logger.luck(f'Strong ties scores : {strong_ties}')
 
         # Create queue with weak measured
         for candidate in candidates:
-            # weak_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, weak_set, context)
-            weak_ties.append({candidate: 0})
+            weak_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, weak_set, context)
+            weak_ties.append({candidate: weak_tie_score})
 
-        logger.luck(f'Weak ties score : {weak_ties}')
+        logger.luck(f'Weak ties scores : {weak_ties}')
 
         # TODO: Get the highest score candidate
 
@@ -68,7 +69,7 @@ class LuckGenerator:
         # TODO: Filter by geo location
         candidates = list(filter(lambda x: x[0] != client_twitter_profile[3], candidates_by_context))
         logger.luck(f'Candidates are : {candidates}')
-        return
+        return candidates
 
     def generate_weak_set(self, context):
         # TODO: Create dictionary to support complex queries
@@ -92,4 +93,3 @@ class LuckGenerator:
         for set in weak_set:
             weak_merged_list += set
         database_api.insert_datamuse_set(context, strong_merged_list, weak_merged_list)
-        return 0

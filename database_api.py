@@ -3,6 +3,7 @@ import os
 
 USER_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/users.db"
 TWEETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/tweets.db"
+TWITTER_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/twitter.db"
 SETS_DATABASE = os.path.dirname(os.path.realpath(__file__)) + "/datasets/sets.db"
 
 def insert_datamuse_set(context, strong_set, weak_set):
@@ -30,7 +31,7 @@ def get_datamuse_set(context, strength):
 
 
 def get_all_tweets_by_username(user_name):
-    conn = sqlite3.connect(TWEETS_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     t = (user_name, )
     tweets = []
@@ -42,7 +43,7 @@ def get_all_tweets_by_username(user_name):
 
 # TODO : Join from both followers and following tables
 def get_all_followers(user_id):
-    conn = sqlite3.connect(USER_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     id = (user_id, )
     followers = []
@@ -53,7 +54,7 @@ def get_all_followers(user_id):
 
 # TODO : Join from both followers and following tables
 def get_all_following(user_id):
-    conn = sqlite3.connect(USER_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     id = (user_id, )
     following = []
@@ -63,7 +64,7 @@ def get_all_following(user_id):
     return following
 
 def username_to_id(user_name):
-    conn = sqlite3.connect(USER_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     t = (user_name, )
     id = None
@@ -73,7 +74,7 @@ def username_to_id(user_name):
     return id
 
 def get_profile(user_id):
-    conn = sqlite3.connect(USER_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     t = (user_id, )
     profile = None
@@ -83,7 +84,7 @@ def get_profile(user_id):
     return profile
 
 def get_all_tweets_by_context(context):
-    conn = sqlite3.connect(TWEETS_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     tweets = []
     added_ids = []
@@ -97,7 +98,7 @@ def get_all_tweets_by_context(context):
     return tweets
 
 def get_all_users_by_context(context):
-    conn = sqlite3.connect(TWEETS_DATABASE)
+    conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     screen_names = []
     for term in context.split(" "):
@@ -107,5 +108,4 @@ def get_all_users_by_context(context):
                 screen_names.append(row[14])
     conn.close()
     return screen_names
-
 

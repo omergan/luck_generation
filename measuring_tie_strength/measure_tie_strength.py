@@ -22,21 +22,22 @@ class TieStrengthTool:
 
 
         # TODO : code below is placeholder
-        topology_score = self.topology(user_id, candidate_id) + self.topology(candidate_id, user_id)
+        topology_score = self.topology(user, user_id, candidate, candidate_id) + self.topology(candidate, candidate_id, user, user_id)
         # likeness_score = self.likeness(user_id, candidate_id, context)
         communication_score = self.communication(user_id, user, candidate_id, candidate, context) + self.communication(candidate_id, candidate, user_id, user, context)
+        logger.tie(f'Tie Score for {user} and {candidate} is {communication_score * topology_score}')
         return communication_score * topology_score
 
     def communication(self, user_id, user, candidate_id, candidate, context):
-        logger.tie(f'Calculating communication for {user_id} --> {candidate_id}')
+        logger.tie(f'Calculating communication for {user} --> {candidate}')
 
         # Favourites
         if self.online:
-            all_favorites = twint_api.get_favorites_by_username(user, 20)
+            all_favorites = twint_api.get_favorites_by_username(user, 80)
         favorites = list(filter(lambda x: x.user_id == candidate_id, all_favorites))
 
         if self.online:
-            all_tweets = twint_api.get_tweets_from_timeline(user, 20)
+            all_tweets = twint_api.get_tweets_from_timeline(user, 80)
 
         # Retweets
         all_retweets = list(filter(lambda x: x.user_id != user_id, all_tweets))
@@ -61,17 +62,19 @@ class TieStrengthTool:
 
         return 0  # Replies U Retweets U Favourites
 
-    def topology(self, user_id, target_id):
-        logger.tie(f'Calculating topology for {user_id} --> {target_id}')
+    def topology(self, user, user_id, target, target_id):
+        logger.tie(f'Calculating topology for {user} --> {target}')
         if self.online:
-            twint_api.get_followers(user_id, 200)
+            twint_api.get_followers(user_id, 20)
         user_followers = database_api.get_all_followers(user_id)
         if target_id in user_followers:
             return 1
 
         intersection = []
         if self.online:
-            twint_api.get_following(target_id, 200)
+            twint_api.get_following(target_id, 20)
         candidate_following = database_api.get_all_following(target_id)
         intersection = [follower for follower in user_followers if follower in candidate_following]
-        return len(intersection) / len(user_followers)
+        if len(user_followers) != 0:
+            return len(intersection) / len(user_followers)
+        return 1
