@@ -19,13 +19,14 @@ class LuckGenerator:
         client_twitter_profile = database_api.get_profile(database_api.username_to_id(user))
         # Get all candidates by context
         candidates = self.get_candidates(context, client_twitter_profile)
-
-        candidates = ['accelerator_ffm']
         # Generate set from datamuse
         # if self.online:
         #     weak_set_online = datamuse_api.generate_weak_set(context)
         #     strong_set_online = datamuse_api.generate_strong_set(context)
         #     self.store_sets(context, strong_set_online, weak_set_online)
+
+        candidates = ['accelerator_ffm']
+        logger.luck(f'Candidates are : {candidates}')
 
         strong_set = self.generate_strong_set(context)
         weak_set = self.generate_weak_set(context)
@@ -48,13 +49,12 @@ class LuckGenerator:
             strong_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, strong_set, context)
             strong_ties.append({candidate: strong_tie_score})
 
-        logger.luck(f'Strong ties scores : {strong_ties}')
-
         # Create queue with weak measured
         for candidate in candidates:
             weak_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, weak_set, context)
             weak_ties.append({candidate: weak_tie_score})
 
+        logger.luck(f'Strong ties scores : {strong_ties}')
         logger.luck(f'Weak ties scores : {weak_ties}')
 
         # TODO: Get the highest score candidate
@@ -68,19 +68,21 @@ class LuckGenerator:
         candidates_by_context = database_api.get_all_users_by_context(context)
         # TODO: Filter by geo location
         candidates = list(filter(lambda x: x[0] != client_twitter_profile[3], candidates_by_context))
-        logger.luck(f'Candidates are : {candidates}')
+        # logger.luck(f'Candidates are : {candidates}')
         return candidates
 
     def generate_weak_set(self, context):
         # TODO: Create dictionary to support complex queries
-        weak_set = database_api.get_datamuse_set(context, "weak_set").split(";")
-        logger.luck(f'Strong key words{weak_set} tweets.')
-        return weak_set
+        # weak_set = database_api.get_datamuse_set(context, "weak_set").split(";")
+        # logger.luck(f'Weak key words{weak_set} tweets.')
+        return ['graduate', 'education', 'certificate', 'experience', 'hiring', 'search',
+                'innovators', 'innovation', 'team', 'linkedin', 'startup', 'work'
+                , 'cv', 'market', 'salary', 'recruit', 'company', 'openings']
 
     def generate_strong_set(self, context):
         # TODO: Create dictionary to support complex queries
         strong_set = database_api.get_datamuse_set(context, "strong_set").split(";")
-        logger.luck(f'Strong key words{strong_set} tweets.')
+        logger.luck(f'Strong key words{strong_set}')
         return strong_set
 
     def store_sets(self, context, strong_set, weak_set):

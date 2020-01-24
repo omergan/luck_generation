@@ -20,9 +20,9 @@ def set_to_df(datamuse_response):
 def generate_weak_set(context):
     keywords = []
     for word in context.split(" "):
-        triggered = api.words(rel_ant=word)
-        set_of_words = [x['word'] for x in triggered]
-        keywords.append(set_of_words)
+        triggered = api.words(rel_par=word)
+        set_of_triggered_words = [x['word'] for x in triggered]
+        keywords.append(set_of_triggered_words)
     print("DM : Weak set has been successfully generated!")
     return keywords
 
