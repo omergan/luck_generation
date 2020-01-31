@@ -16,30 +16,29 @@ class LuckGenerator:
         if self.online:
             twint_api.get_profile_by_username(user)
 
-        client_twitter_profile = database_api.get_profile(database_api.username_to_id(user))
-        # Get all candidates by context
+        client_twitter_profile = database_api.get_profile(user)
+        # Get all candidates by context and Geo location
         candidates = self.get_candidates(context, client_twitter_profile)
         # Generate set from datamuse
         # if self.online:
         #     weak_set_online = datamuse_api.generate_weak_set(context)
         #     strong_set_online = datamuse_api.generate_strong_set(context)
         #     self.store_sets(context, strong_set_online, weak_set_online)
-
-        candidates = ['accelerator_ffm']
-        logger.luck(f'Candidates are : {candidates}')
+        logger.luck(f'Candidates length {len(candidates)} ,Candidates are : {candidates}')
 
         strong_set = self.generate_strong_set(context)
         weak_set = self.generate_weak_set(context)
 
-        logger.debug(strong_set)
-        logger.debug(weak_set)
+        logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
+        logger.luck(f'Weak keywords length {len(weak_set)}, Weak keywords: {weak_set}')
 
-        # The candidates that failed to generate luck
+        # The candidates with their score against strong keywords
         strong_ties = []
 
-        # Dictionary [{username, strong tie score, weak tie score}] of candidate and their score
+        # The candidates with their score against weak keywords
         weak_ties = []
 
+        # Tie strength tool (By Omer Ganon)
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online)
 
         # TODO: Redesign how to decide which candidate pass the first step, Aka, on which candidates calculate weak ties
@@ -47,17 +46,25 @@ class LuckGenerator:
         # Create queue with strong measured
         for candidate in candidates:
             strong_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, strong_set, context)
-            strong_ties.append({candidate: strong_tie_score})
+            strong_ties.append({'candidate': candidate, 'score': strong_tie_score})
+            logger.luck(f'Strong tie strength between {user} -> {candidate} is {strong_tie_score}')
+
+        strong_ties.sort(key=lambda x: x['score'], reverse=True)
 
         # Create queue with weak measured
         for candidate in candidates:
             weak_tie_score = tie_strength_tool.measure_tie_strength(user, candidate, weak_set, context)
-            weak_ties.append({candidate: weak_tie_score})
+            weak_ties.append({'candidate': candidate, 'score': weak_tie_score})
+            logger.luck(f'Weak tie strength between {user} -> {candidate} is {weak_tie_score}')
 
+        weak_ties.sort(key=lambda x: x['score'], reverse=True)
+
+
+        logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Strong ties scores : {strong_ties}')
         logger.luck(f'Weak ties scores : {weak_ties}')
 
-        # TODO: Get the highest score candidate
+        # TODO: Get the highest score candidate: Weak * Strong
 
         return 0
 
@@ -67,8 +74,7 @@ class LuckGenerator:
             twint_api.get_tweets(context, 20)
         candidates_by_context = database_api.get_all_users_by_context(context)
         # TODO: Filter by geo location
-        candidates = list(filter(lambda x: x[0] != client_twitter_profile[3], candidates_by_context))
-        # logger.luck(f'Candidates are : {candidates}')
+        candidates = list(filter(lambda x: x != client_twitter_profile[3], candidates_by_context))
         return candidates
 
     def generate_weak_set(self, context):
@@ -82,7 +88,6 @@ class LuckGenerator:
     def generate_strong_set(self, context):
         # TODO: Create dictionary to support complex queries
         strong_set = database_api.get_datamuse_set(context, "strong_set").split(";")
-        logger.luck(f'Strong key words{strong_set}')
         return strong_set
 
     def store_sets(self, context, strong_set, weak_set):

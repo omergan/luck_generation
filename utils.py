@@ -16,4 +16,4 @@ class Logger:
         print("\033[34m TIE:{}\033[00m".format(msg))
 
     def luck(self, msg):
-        print("\033[92m LUCK:{}\033[00m".format(msg))
+        print("\033[35m LUCK:{}\033[00m".format(msg))

@@ -73,12 +73,12 @@ def username_to_id(user_name):
     conn.close()
     return id
 
-def get_profile(user_id):
+def get_profile(username):
     conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
-    t = (user_id, )
+    t = (username, )
     profile = None
-    for row in cursor.execute('SELECT * FROM users WHERE id =?', t):
+    for row in cursor.execute('SELECT * FROM users WHERE username = ?', t):
         profile = row
     conn.close()
     return profile
@@ -109,3 +109,42 @@ def get_all_users_by_context(context):
     conn.close()
     return screen_names
 
+def get_filtered_favorites(user_id, candidate_id):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    filtered_favorites = []
+    params = (candidate_id, user_id,)
+    sql = 'SELECT * FROM tweets WHERE user_id = "{}" AND id in \
+          (SELECT tweet_id FROM favorites WHERE user_id = "{}")'.format(*params)
+    for row in cursor.execute(sql):
+        filtered_favorites.append(row)
+
+    conn.close()
+    return filtered_favorites
+
+def get_favorites_by_context(user_id, keyword):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    favorites_by_context = []
+    params = (user_id, '%' + keyword + '%')
+    sql = 'SELECT * FROM tweets WHERE user_id = "{}" AND tweet LIKE "{}" AND id in \
+          (SELECT tweet_id FROM favorites)'.format(*params)
+
+    for row in cursor.execute(sql):
+        favorites_by_context.append(row)
+
+    conn.close()
+    return favorites_by_context
+
+
+def get_user_tweets_by_context(user_id, keyword):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    params = (user_id, '%' + keyword + '%')
+    user_tweets_by_context = []
+    sql = 'SELECT * FROM tweets WHERE user_id = "{}" AND tweet LIKE "{}"'.format(*params)
+    for row in cursor.execute(sql):
+        user_tweets_by_context.append(row)
+
+    conn.close()
+    return user_tweets_by_context
