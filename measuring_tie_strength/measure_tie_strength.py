@@ -6,8 +6,9 @@ logger = Logger()
 
 # Contextual Tie Strength Measuring Tool
 class TieStrengthTool:
-    def __init__(self, is_online=False):
+    def __init__(self, is_online=False, limit=100):
         self.online = is_online
+        self.limit = limit
 
     def measure_tie_strength(self, user, candidate, keywords, context):
 
@@ -31,19 +32,19 @@ class TieStrengthTool:
 
         # Favourites
         if self.online:
-            twint_api.get_favorites_by_username(user, 20)
+            twint_api.get_favorites_by_username(user, self.limit)
 
         filtered_user_favorites = database_api.get_filtered_favorites(user_id, candidate_id)
 
         if self.online:
-            twint_api.get_favorites_by_username(candidate, 20)
+            twint_api.get_favorites_by_username(candidate, self.limit)
 
         filtered_candidate_favorites = database_api.get_filtered_favorites(candidate_id, user_id)
 
         # Tweets
         if self.online:
-            twint_api.get_tweets_from_timeline(user, 20)
-            twint_api.get_tweets_from_timeline(candidate, 20)
+            twint_api.get_tweets_from_timeline(user, self.limit)
+            twint_api.get_tweets_from_timeline(candidate, self.limit)
 
         all_user_tweets = database_api.get_all_tweets_by_username(user)
         all_candidate_tweets = database_api.get_all_tweets_by_username(candidate)
@@ -148,14 +149,14 @@ class TieStrengthTool:
         logger.tie(f'Calculating topology for {user_profile[2]} --> {candidate_profile[2]}')
 
         if self.online:
-            twint_api.get_followers(user_profile, 20)
+            twint_api.get_followers(user_profile, self.limit)
         user_followers = database_api.get_all_followers(user_id)
         if candidate_id in user_followers:
             logger.tie(f'{user_profile[2]} and {candidate_profile[2]} have a direct connection')
             return 1
 
         if self.online:
-            twint_api.get_following(candidate_id, 20)
+            twint_api.get_following(candidate_id, self.limit)
 
         candidate_following = database_api.get_all_following(candidate_id)
         intersection = [follower for follower in user_followers if follower in candidate_following]

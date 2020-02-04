@@ -7,8 +7,9 @@ from utils import Logger
 logger = Logger()
 
 class LuckGenerator:
-    def __init__(self, is_online=False):
+    def __init__(self, is_online=False, limit=100):
         self.online = is_online
+        self.limit = limit
 
     def generating_luck(self, user, context):
         logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
@@ -39,7 +40,7 @@ class LuckGenerator:
         weak_ties = []
 
         # Tie strength tool (By Omer Ganon)
-        tie_strength_tool = tsm.TieStrengthTool(is_online=self.online)
+        tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit)
 
         # TODO: Redesign how to decide which candidate pass the first step, Aka, on which candidates calculate weak ties
 
@@ -71,7 +72,7 @@ class LuckGenerator:
 
     def get_candidates(self, context, client_twitter_profile):
         if self.online:
-            twint_api.get_tweets(context, 20)
+            twint_api.get_tweets(context, self.limit)
         candidates_by_context = database_api.get_all_users_by_context(context)
         # TODO: Filter by geo location
         candidates = list(filter(lambda x: x != client_twitter_profile[3], candidates_by_context))
