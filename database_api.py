@@ -27,6 +27,8 @@ def get_datamuse_set(context, strength):
     for row in cursor.execute(sql):
         set.append(row)
     conn.close()
+    if set == (['']):
+        return []
     return set[0][0]
 
 

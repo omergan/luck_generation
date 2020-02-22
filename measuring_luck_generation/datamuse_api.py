@@ -32,6 +32,6 @@ def generate_strong_set(context):
     for word in context.split(" "):
         triggered = api.words(rel_trg=word)
         set_of_words = [x['word'] for x in triggered]
-        keywords.append(set_of_words)
+        keywords += set_of_words
     print("DM : Strong set has been successfully generated!")
     return keywords

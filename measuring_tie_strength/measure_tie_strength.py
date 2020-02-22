@@ -11,11 +11,9 @@ class TieStrengthTool:
         self.limit = limit
 
     def measure_relevance(self, customer, context):
-        context="DevOps start-up algorithm roadmap TechOps"
         # TODO : make this work in online mode
         user_profile = database_api.get_profile(customer)
         keywords = context.split(" ")
-        print(keywords)
         for kw in keywords:
             context_favorites = database_api.get_favorites_by_context(user_profile[0], kw)
             context_tweets = database_api.get_user_tweets_by_context(user_profile[0], kw)
@@ -27,7 +25,7 @@ class TieStrengthTool:
         # all_retweets = list(filter(lambda x: x[0] != user_profile[0], all_user_tweets))
         # print(f'all_user_tweets: {len(all_user_tweets)}, all_favorites: {len(all_favorites)}, context_favorites: {len(context_favorites)}, context_tweets: {len(context_tweets)}')
 
-        print(len(context_tweets + context_favorites) * (len(all_user_tweets) + len(all_favorites) - len(context_tweets + context_favorites)) / len (all_user_tweets) + len(all_favorites))
+        # print(len(context_tweets + context_favorites) * (len(all_user_tweets) + len(all_favorites) - len(context_tweets + context_favorites)) / len (all_user_tweets) + len(all_favorites))
         return len(context_tweets + context_favorites) * (len(all_user_tweets) + len(all_favorites) - len(context_tweets + context_favorites)) / len (all_user_tweets) + len(all_favorites)
 
     def measure_tie_strength(self, user, candidate, context):
@@ -82,7 +80,7 @@ class TieStrengthTool:
         user_to_candidate_communication_score = self.communication(data)
         candidate_to_user_communication_score = self.communication(data)
         communication_score = user_to_candidate_communication_score + candidate_to_user_communication_score
-        logger.tie(f'Tie Score for {user} and {candidate} is {communication_score * topology_score * likeness_score}')
+        logger.tie(f'Tie Score for {user} and {candidate} is {communication_score + topology_score + likeness_score}')
 
         logger.debug(f'Comms: {communication_score} , Topology: {topology_score}, Likeness: {likeness_score}')
         return communication_score + topology_score + likeness_score
@@ -118,8 +116,6 @@ class TieStrengthTool:
         retweet_score = (len(retweets) * (len(all_retweets) - len(retweets) / len(all_retweets)))
         mention_score = (len(mentioned_in) * (len(all_user_tweets) - len(mentioned_in) / len(all_user_tweets)))
         favorite_score = (len(filtered_user_favorites) * (len(all_favorites) - len(filtered_user_favorites)) / len(all_favorites))
-        print(f'{mention_score} + {retweet_score} + {favorite_score}')
-
         return mention_score + retweet_score + favorite_score
 
     def likeness(self, data):
