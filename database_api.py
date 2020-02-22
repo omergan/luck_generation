@@ -42,7 +42,7 @@ def get_all_tweets_by_username(user_name):
 
 
 # TODO : Join from both followers and following tables
-def get_all_followers(user_id):
+def get_all_followers_ids(user_id):
     conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     id = (user_id, )
@@ -72,6 +72,16 @@ def username_to_id(user_name):
         id = row[0]
     conn.close()
     return id
+
+def id_to_username(id):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    t = (id, )
+    username = None
+    for row in cursor.execute('SELECT username FROM users WHERE id =?', t):
+        username = row[0]
+    conn.close()
+    return username
 
 def get_profile(username):
     conn = sqlite3.connect(TWITTER_DATABASE)

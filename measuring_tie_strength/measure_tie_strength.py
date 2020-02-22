@@ -10,7 +10,7 @@ class TieStrengthTool:
         self.online = is_online
         self.limit = limit
 
-    def measure_tie_strength(self, user, candidate, keywords, context):
+    def measure_tie_strength(self, user, candidate, context):
 
         logger.tie(f'Measuring tie strength for {user} and {candidate}')
         # likeness
@@ -55,7 +55,6 @@ class TieStrengthTool:
             'all_user_tweets': all_user_tweets,
             'all_candidate_tweets': all_candidate_tweets,
             'context': context,
-            'keywords': keywords,
             'user_profile': user_profile,
             'candidate_profile': candidate_profile,
         }
@@ -150,7 +149,7 @@ class TieStrengthTool:
 
         if self.online:
             twint_api.get_followers(user_profile, self.limit)
-        user_followers = database_api.get_all_followers(user_id)
+        user_followers = database_api.get_all_followers_ids(user_id)
         if candidate_id in user_followers:
             logger.tie(f'{user_profile[2]} and {candidate_profile[2]} have a direct connection')
             return 1
