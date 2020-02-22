@@ -146,6 +146,31 @@ def get_favorites_by_context(user_id, keyword):
     conn.close()
     return favorites_by_context
 
+def get_favorites(user_id):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    favorites = []
+    params = (user_id,)
+    sql = 'SELECT tweet_id FROM favorites WHERE user_id = "{}"'.format(*params)
+
+    for row in cursor.execute(sql):
+        favorites.append(row)
+
+    conn.close()
+    return favorites
+
+def get_common_favorites(user_id, candidate_id):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    favorites = []
+    params = (user_id, candidate_id)
+    sql = 'SELECT f1.tweet_id FROM favorites f1, favorites f2 WHERE f1.user_id = "{}" AND f2.user_id = "{}" AND f1.tweet_id = f2.tweet_id'.format(*params)
+
+    for row in cursor.execute(sql):
+        favorites.append(row)
+
+    conn.close()
+    return favorites
 
 def get_user_tweets_by_context(user_id, keyword):
     conn = sqlite3.connect(TWITTER_DATABASE)
