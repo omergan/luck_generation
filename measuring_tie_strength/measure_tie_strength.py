@@ -6,84 +6,59 @@ logger = Logger()
 
 # Contextual Tie Strength Measuring Tool
 class TieStrengthTool:
-    def __init__(self, is_online=False, limit=100):
+    def __init__(self, is_online=False, limit=100, username=None):
         self.online = is_online
         self.limit = limit
+        self.customer_data = self.load_user_data(username)
 
-    def measure_relevance(self, customer, context):
-        # TODO : make this work in online mode
-        user_profile = database_api.get_profile(customer)
-        keywords = context.split(" ")
-        for kw in keywords:
-            context_favorites = database_api.get_favorites_by_context(user_profile[0], kw)
-            context_tweets = database_api.get_user_tweets_by_context(user_profile[0], kw)
-
-            all_user_tweets = database_api.get_all_tweets_by_username(user_profile[3])
-            all_favorites = database_api.get_favorites(user_profile[0])
-
-        #TODO : RETWEET IS BROKEN
-        # all_retweets = list(filter(lambda x: x[0] != user_profile[0], all_user_tweets))
-        # print(f'all_user_tweets: {len(all_user_tweets)}, all_favorites: {len(all_favorites)}, context_favorites: {len(context_favorites)}, context_tweets: {len(context_tweets)}')
-
-        # print(len(context_tweets + context_favorites) * (len(all_user_tweets) + len(all_favorites) - len(context_tweets + context_favorites)) / len (all_user_tweets) + len(all_favorites))
-        return len(context_tweets + context_favorites) * (len(all_user_tweets) + len(all_favorites) - len(context_tweets + context_favorites)) / len (all_user_tweets) + len(all_favorites)
-
-    def measure_tie_strength(self, user, candidate, context):
-
-        logger.tie(f'Measuring tie strength for {user} and {candidate}')
-
+    def load_user_data(self, user):
         if self.online:
-            twint_api.get_profile_by_username(candidate)
             twint_api.get_profile_by_username(user)
-
         user_profile = database_api.get_profile(user)
-        candidate_profile = database_api.get_profile(candidate)
-        if candidate_profile is None:
-            twint_api.get_profile_by_username(candidate)
-            candidate_profile = database_api.get_profile(candidate)
-            print(candidate_profile)
+        print(user)
+        data = {'tweets': [], 'favorites': [], 'relevance': {}, 'profile': user_profile}
+        data['tweets'] += database_api.get_all_tweets_by_username(user_profile[3])
+        data['favorites'] += database_api.get_favorites_by_context(user_profile[0], "")
+        return data
 
-        user_id = user_profile[0]
-        candidate_id = candidate_profile[0]
+    def keywords_frequency(self, user_data, keywords):
+        total_tweets = user_data['tweets'] + user_data['favorites']
+        for keyword in keywords:
+            for tweet in total_tweets:
+                user_data['relevance'][keyword] = tweet.count(keyword)
 
-        # Favourites
-        if self.online:
-            twint_api.get_favorites_by_username(user, self.limit)
 
-        filtered_user_favorites = database_api.get_filtered_favorites(user_id, candidate_id)
+    def measure_relevance(self, customer_data, candidate_data, keywords):
+        customer_relevance = customer_data['relevance']
+        candidate_relevance = candidate_data['relevance']
 
-        if self.online:
-            twint_api.get_favorites_by_username(candidate, self.limit)
+        relevance = 0
+        for keyword in keywords:
+            if keyword in candidate_relevance and keyword in customer_relevance:
+                relevance = candidate_relevance[keyword] + customer_relevance[keyword]
 
-        filtered_candidate_favorites = database_api.get_filtered_favorites(candidate_id, user_id)
+        return relevance
 
-        # Tweets
-        if self.online:
-            twint_api.get_tweets_from_timeline(user, self.limit)
-            twint_api.get_tweets_from_timeline(candidate, self.limit)
+    def measure_surprise(self, customer_data, candidate_data, keywords):
+        customer_relevance = customer_data['relevance']
+        candidate_relevance = candidate_data['relevance']
 
-        all_user_tweets = database_api.get_all_tweets_by_username(user)
-        all_candidate_tweets = database_api.get_all_tweets_by_username(candidate)
+        surprise = 0
+        for keyword in keywords:
+            if keyword in candidate_relevance and keyword not in customer_relevance:
+                surprise += candidate_relevance[keyword]
+            elif keyword not in candidate_relevance and keyword in customer_relevance:
+                surprise += customer_relevance[keyword]
 
-        data = {
-            'filtered_user_favorites': filtered_user_favorites,
-            'filtered_candidate_favorites': filtered_candidate_favorites,
-            'all_user_tweets': all_user_tweets,
-            'all_candidate_tweets': all_candidate_tweets,
-            'context': context,
-            'user_profile': user_profile,
-            'candidate_profile': candidate_profile,
-        }
+        return surprise
 
-        topology_score = self.topology(data) + self.topology(data)
-        likeness_score = self.likeness(data)
-        user_to_candidate_communication_score = self.communication(data)
-        candidate_to_user_communication_score = self.communication(data)
-        communication_score = user_to_candidate_communication_score + candidate_to_user_communication_score
-        logger.tie(f'Tie Score for {user} and {candidate} is {communication_score + topology_score + likeness_score}')
+    def measure_tie_strength(self, user, candidate, keywords):
+        logger.tie(f'Measuring tie strength for {user} and {candidate}')
+        candidate_data = self.load_user_data(candidate)
+        relevance_unity = self.measure_relevance(candidate_data, self.customer_data, keywords)
+        symmetric_diff = self.measure_surprise(candidate_data, self.customer_data, keywords)
+        return relevance_unity, symmetric_diff
 
-        logger.debug(f'Comms: {communication_score} , Topology: {topology_score}, Likeness: {likeness_score}')
-        return communication_score + topology_score + likeness_score
 
     def communication(self, data):
 
