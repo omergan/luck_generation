@@ -15,7 +15,6 @@ class TieStrengthTool:
         if self.online:
             twint_api.get_profile_by_username(user)
         user_profile = database_api.get_profile(user)
-        print(user)
         data = {'tweets': [], 'favorites': [], 'relevance': {}, 'profile': user_profile}
         data['tweets'] += database_api.get_all_tweets_by_username(user_profile[3])
         data['favorites'] += database_api.get_favorites_by_context(user_profile[0], "")
@@ -25,7 +24,8 @@ class TieStrengthTool:
         total_tweets = user_data['tweets'] + user_data['favorites']
         for keyword in keywords:
             for tweet in total_tweets:
-                user_data['relevance'][keyword] = tweet.count(keyword)
+                if keyword in tweet[2]:
+                    user_data['relevance'][keyword] = tweet[2].count(keyword)
 
 
     def measure_relevance(self, customer_data, candidate_data, keywords):
@@ -55,6 +55,8 @@ class TieStrengthTool:
     def measure_tie_strength(self, user, candidate, keywords):
         logger.tie(f'Measuring tie strength for {user} and {candidate}')
         candidate_data = self.load_user_data(candidate)
+        self.keywords_frequency(self.customer_data, keywords)
+        self.keywords_frequency(candidate_data, keywords)
         relevance_unity = self.measure_relevance(candidate_data, self.customer_data, keywords)
         symmetric_diff = self.measure_surprise(candidate_data, self.customer_data, keywords)
         return relevance_unity, symmetric_diff

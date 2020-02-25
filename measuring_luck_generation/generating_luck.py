@@ -12,7 +12,7 @@ class LuckGenerator:
         self.limit = limit
         self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps', 'python', 'programmer',
                            'java', 'computer science', 'data science', 'data analyze', 'c++', 'web', 'framework', 'embedded',
-                           'machine learning', 'deep learning']
+                           'machine learning', 'deep learning', 'startup']
 
     def generating_luck(self, user, context):
         logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
@@ -33,16 +33,16 @@ class LuckGenerator:
 
         # Tie strength tool (By Omer Ganon)
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=user)
-        tsm.load_customer_data(customer_profile, strong_set)
 
         for candidate in candidates:
             # The connection between the customer and given context -> Match,
             # The connection between the customer and given candidate -> Mismatch
-            relevance, surprise = tie_strength_tool.measure_tie_strength(customer_profile, candidate, strong_set)
-            luck.append({'candidate': candidate, 'score': surprise * relevance})
-            logger.luck(f'Weak tie strength between {customer_profile} -> {candidate} is {surprise}')
+            relevance, surprise = tie_strength_tool.measure_tie_strength(user, candidate, strong_set)
+            luck.append({'candidate': candidate, 'surprise': surprise, 'relevance': relevance})
+            logger.luck(f'Relevance between {user} -> {candidate} is {relevance}')
+            logger.luck(f'Surprise between {user} -> {candidate} is {surprise}')
 
-        luck.sort(key=lambda x: x['score'], reverse=True)
+        # luck.sort(key=lambda x: x['score'], reverse=True)
         logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Weak ties scores : {luck}')
 
@@ -55,10 +55,12 @@ class LuckGenerator:
             twint_api.get_followers(client_twitter_profile[0], self.limit)
         followers_ids = database_api.get_all_followers_ids(client_twitter_profile[0])
         candidates = []
+        # for follower_id in followers_ids:
+        #     for keyword in keywords:
+        #         if database_api.get_user_tweets_by_context(follower_id, keyword):
+        #             candidates.append(database_api.id_to_username(follower_id))
         for follower_id in followers_ids:
-            for keyword in keywords:
-                if database_api.get_user_tweets_by_context(follower_id, keyword):
-                    candidates.append(database_api.id_to_username(follower_id))
+            candidates.append(database_api.id_to_username(follower_id))
         return candidates
 
     def generate_strong_set(self, context):

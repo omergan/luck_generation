@@ -11,6 +11,6 @@ logger = Logger()
 
 if __name__ == '__main__':
     logger.debug("Starting main program!\n")
-    luck_generator = LG.LuckGenerator(is_online=True, limit=LIMIT)
+    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
     luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
     logger.debug("\nEnding main program!")
