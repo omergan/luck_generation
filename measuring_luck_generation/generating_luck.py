@@ -10,8 +10,11 @@ class LuckGenerator:
     def __init__(self, is_online=False, limit=100):
         self.online = is_online
         self.limit = limit
-        self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps', 'python', 'programmer',
-                           'java', 'computer science', 'data science', 'data analyze', 'c++', 'web', 'framework', 'embedded',
+        self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps',
+                           'python', 'programmer', 'java', 'computer science', 'data science', 'data analyze', 'c++',
+                           'web', 'framework', 'embedded', 'alpha version', 'API', 'api', 'app', 'application', 'beta',
+                           'version', 'bios', 'qa', 'automation', 'agile', 'scrum', 'demo', 'development', 'device',
+                           'emulator', 'freeware', 'open source', 'interface', 'operating systems', 'workflow',
                            'machine learning', 'deep learning', 'startup']
 
     def generating_luck(self, user, context):
@@ -25,8 +28,8 @@ class LuckGenerator:
         strong_set = self.generate_strong_set(context)
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
 
-        candidates = self.get_candidates(strong_set, customer_profile)
-        logger.luck(f'Candidates length {len(candidates)} ,Candidates are : {candidates}')
+        followers = self.get_candidates(strong_set, customer_profile)
+        logger.luck(f'Candidates length {len(followers)} ,Candidates are : {followers}')
 
         # The candidates with their score against weak keywords
         luck = []
@@ -34,15 +37,21 @@ class LuckGenerator:
         # Tie strength tool (By Omer Ganon)
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=user)
 
-        for candidate in candidates:
+        for follower in followers:
             # The connection between the customer and given context -> Match,
             # The connection between the customer and given candidate -> Mismatch
-            relevance, surprise = tie_strength_tool.measure_tie_strength(user, candidate, strong_set)
-            luck.append({'candidate': candidate, 'surprise': surprise, 'relevance': relevance})
-            logger.luck(f'Relevance between {user} -> {candidate} is {relevance}')
-            logger.luck(f'Surprise between {user} -> {candidate} is {surprise}')
+            relevance, surprise = tie_strength_tool.measure_tie_strength(user, follower['username'], strong_set)
+            if relevance == 0:
+                followers_of_followers = database_api.get_all_followers_ids(follower['id'])
+                for follower_of_follower in followers_of_followers:
+                    luck.append({'candidate': follower_of_follower, 'surprise': surprise, 'relevance': relevance})
+                    logger.luck(f'Relevance between {user} -> {follower_of_follower} is {relevance}')
+                    logger.luck(f'Surprise between {user} -> {follower_of_follower} is {surprise}')
+            luck.append({'candidate': follower, 'surprise': surprise, 'relevance': relevance})
+            logger.luck(f'Relevance between {user} -> {follower} is {relevance}')
+            logger.luck(f'Surprise between {user} -> {follower} is {surprise}')
 
-        # luck.sort(key=lambda x: x['score'], reverse=True)
+        luck.sort(key=lambda x: x['relevance'], reverse=True)
         logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Weak ties scores : {luck}')
 
@@ -60,7 +69,8 @@ class LuckGenerator:
         #         if database_api.get_user_tweets_by_context(follower_id, keyword):
         #             candidates.append(database_api.id_to_username(follower_id))
         for follower_id in followers_ids:
-            candidates.append(database_api.id_to_username(follower_id))
+            follower = {'id': follower_id, 'username': database_api.id_to_username(follower_id)}
+            candidates.append(follower)
         return candidates
 
     def generate_strong_set(self, context):

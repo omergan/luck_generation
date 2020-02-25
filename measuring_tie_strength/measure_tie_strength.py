@@ -17,7 +17,9 @@ class TieStrengthTool:
         user_profile = database_api.get_profile(user)
         data = {'tweets': [], 'favorites': [], 'relevance': {}, 'profile': user_profile}
         data['tweets'] += database_api.get_all_tweets_by_username(user_profile[3])
+        logger.tie(f'{user} has {len(data["tweets"])} tweets')
         data['favorites'] += database_api.get_favorites_by_context(user_profile[0], "")
+        logger.tie(f'{user} has {len(data["favorites"])} favorites')
         return data
 
     def keywords_frequency(self, user_data, keywords):
@@ -26,7 +28,6 @@ class TieStrengthTool:
             for tweet in total_tweets:
                 if keyword in tweet[2]:
                     user_data['relevance'][keyword] = tweet[2].count(keyword)
-
 
     def measure_relevance(self, customer_data, candidate_data, keywords):
         customer_relevance = customer_data['relevance']
@@ -61,9 +62,7 @@ class TieStrengthTool:
         symmetric_diff = self.measure_surprise(candidate_data, self.customer_data, keywords)
         return relevance_unity, symmetric_diff
 
-
     def communication(self, data):
-
         # Unpack data
         user_profile = data['user_profile']
         user_id = user_profile[0]
