@@ -98,3 +98,10 @@ class LuckGenerator:
         for set in weak_set:
             weak_merged_list += set
         database_api.insert_datamuse_set(context, strong_merged_list, weak_merged_list)
+
+    def scrap(self, username):
+        customer_profile = database_api.get_profile(username)
+        followers = self.get_candidates(self.strict_set, customer_profile)
+        for follower in followers:
+            if len(database_api.get_all_tweets_by_username(follower['username'])) < 200:
+                twint_api.get_profile_by_username(follower['username'])
