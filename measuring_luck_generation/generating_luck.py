@@ -15,7 +15,7 @@ class LuckGenerator:
                            'web', 'framework', 'embedded', 'alpha version', 'API', 'api', 'app', 'application', 'beta',
                            'version', 'bios', 'qa', 'automation', 'agile', 'scrum', 'demo', 'development', 'device',
                            'emulator', 'freeware', 'open source', 'interface', 'operating systems', 'workflow',
-                           'machine learning', 'deep learning', 'startup']
+                           'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR']
 
     def generating_luck(self, user, context):
         logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
@@ -106,3 +106,4 @@ class LuckGenerator:
             print(follower)
             if len(database_api.get_all_tweets_by_username(follower['username'])) < 200:
                 twint_api.get_profile_by_username(follower['username'])
+                twint_api.get_tweets_by_username(follower['username'], self.limit)
