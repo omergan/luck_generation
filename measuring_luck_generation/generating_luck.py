@@ -103,5 +103,6 @@ class LuckGenerator:
         customer_profile = database_api.get_profile(username)
         followers = self.get_candidates(self.strict_set, customer_profile)
         for follower in followers:
+            print(follower)
             if len(database_api.get_all_tweets_by_username(follower['username'])) < 200:
                 twint_api.get_profile_by_username(follower['username'])
