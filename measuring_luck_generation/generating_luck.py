@@ -103,8 +103,17 @@ class LuckGenerator:
     def scrap(self, username):
         customer_profile = database_api.get_profile(username)
         followers = self.get_candidates(self.strict_set, customer_profile)
-        for follower in followers:
-            print(follower)
+        for i, follower in enumerate(followers):
+            logger.debug(f'Scraping a customer direct follower {follower["username"]}')
             if len(database_api.get_all_tweets_by_username(follower['username'])) < 200:
                 twint_api.get_profile_by_username(follower['username'])
                 twint_api.get_tweets_by_username(follower['username'], self.limit)
+
+            follower_profile = database_api.get_profile(follower['username'])
+            followers_of_followers = self.get_candidates(self.strict_set, follower_profile)
+            for j, x in enumerate(followers_of_followers):
+                logger.debug(f'{i}.{j} : {x["username"]}')
+                if len(database_api.get_all_tweets_by_username(x['username'])) < 200:
+                    twint_api.get_profile_by_username(x['username'])
+                    twint_api.get_tweets_by_username(x['username'], self.limit)
+

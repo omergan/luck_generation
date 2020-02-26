@@ -43,6 +43,7 @@ def get_tweets_by_username(userName, limit):
     c = twint.Config()
     c.Username = userName
     c.Location = True
+    c.Replies = False
     c.Limit = limit
     c.Database = TWITTER_DATABASE
     # c.Hide_output = True
@@ -63,10 +64,10 @@ def get_tweets_from_timeline(user_name, limit):
     c.Username = user_name
     c.Store_object = True
     c.Retweets = True
-    c.Replies = True
+    c.Replies = False
     c.Limit = limit
     c.Database = TWITTER_DATABASE
-    c.Profile_full = True
+    c.Profile_full = False
     # c.Hide_output = True
     twint.run.Profile(c)
     return twint.output.tweets_list
