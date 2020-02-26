@@ -10,7 +10,13 @@ class LuckGenerator:
     def __init__(self, is_online=False, limit=100):
         self.online = is_online
         self.limit = limit
-        self.strict_set = ['software', 'job', 'engineering', 'developer', 'startup', 'devops', 'computers', 'high tech', 'algorithm', 'roadmap', 'TechOps']
+        self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps',
+                           'python', 'programmer', 'java', 'computer science', 'data science', 'data analyze', 'c++',
+                           'web', 'framework', 'embedded', 'alpha version', 'API', 'api', 'app', 'application', 'beta',
+                           'version', 'bios', 'qa', 'automation', 'agile', 'scrum', 'demo', 'development', 'device',
+                           'emulator', 'freeware', 'open source', 'interface', 'operating systems', 'workflow',
+                           'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR', 'code'
+                           'coding']
 
     def generating_luck(self, user, context):
         logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
@@ -18,35 +24,35 @@ class LuckGenerator:
         if self.online:
             twint_api.get_profile_by_username(user)
 
-        client_twitter_profile = database_api.get_profile(user)
+        customer_profile = database_api.get_profile(user)
 
-        # Generate set from datamuse
         strong_set = self.generate_strong_set(context)
-
-        # Get all candidates by context and Geo location
-        candidates = self.get_candidates(strong_set, client_twitter_profile)
-
-        logger.luck(f'Candidates length {len(candidates)} ,Candidates are : {candidates}')
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
+
+        followers = self.get_candidates(strong_set, customer_profile)
+        logger.luck(f'Candidates length {len(followers)} ,Candidates are : {followers}')
 
         # The candidates with their score against weak keywords
         luck = []
 
         # Tie strength tool (By Omer Ganon)
-        tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit)
+        tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=user)
 
-        # TODO: Redesign how to decide which candidate pass the first step, Aka, on which candidates calculate weak ties
-
-        # The connection between the customer and given context -> Match
-        relevance = tie_strength_tool.measure_relevance(user, context)
-
-        for candidate in candidates:
+        for follower in followers:
+            # The connection between the customer and given context -> Match,
             # The connection between the customer and given candidate -> Mismatch
-            surprise = tie_strength_tool.measure_tie_strength(user, candidate, context)
-            luck.append({'candidate': candidate, 'score': surprise * relevance})
-            logger.luck(f'Weak tie strength between {user} -> {candidate} is {surprise}')
+            relevance, surprise = tie_strength_tool.measure_tie_strength(user, follower['username'], strong_set)
+            if relevance == 0:
+                followers_of_followers = database_api.get_all_followers_ids(follower['id'])
+                for follower_of_follower in followers_of_followers:
+                    luck.append({'candidate': follower_of_follower, 'surprise': surprise, 'relevance': relevance})
+                    logger.luck(f'Relevance between {user} -> {follower_of_follower} is {relevance}')
+                    logger.luck(f'Surprise between {user} -> {follower_of_follower} is {surprise}')
+            luck.append({'candidate': follower, 'surprise': surprise, 'relevance': relevance})
+            logger.luck(f'Relevance between {user} -> {follower} is {relevance}')
+            logger.luck(f'Surprise between {user} -> {follower} is {surprise}')
 
-        luck.sort(key=lambda x: x['score'], reverse=True)
+        luck.sort(key=lambda x: x['relevance'], reverse=True)
         logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Weak ties scores : {luck}')
 
@@ -59,25 +65,28 @@ class LuckGenerator:
             twint_api.get_followers(client_twitter_profile[0], self.limit)
         followers_ids = database_api.get_all_followers_ids(client_twitter_profile[0])
         candidates = []
+        # for follower_id in followers_ids:
+        #     for keyword in keywords:
+        #         if database_api.get_user_tweets_by_context(follower_id, keyword):
+        #             candidates.append(database_api.id_to_username(follower_id))
         for follower_id in followers_ids:
-            for keyword in keywords:
-                if database_api.get_user_tweets_by_context(follower_id, keyword):
-                    candidates.append(database_api.id_to_username(follower_id))
+            follower = {'id': follower_id, 'username': database_api.id_to_username(follower_id)}
+            candidates.append(follower)
         return candidates
 
     def generate_strong_set(self, context):
         # TODO: Create dictionary to support complex queries
         strong_set = []
-        if self.online:
-            strong_set = datamuse_api.generate_strong_set(context)
-            database_api.insert_datamuse_set(context, strong_set, [])
-        else:
-            strong_set = database_api.get_datamuse_set(context, "strong_set")
-            if len(strong_set) == 0:
-                strong_set = datamuse_api.generate_strong_set(context)
-                database_api.insert_datamuse_set(context, strong_set, [])
-            else:
-                strong_set = strong_set.split(";")
+        # if self.online:
+        #     strong_set = datamuse_api.generate_strong_set(context)
+        #     database_api.insert_datamuse_set(context, strong_set, [])
+        # else:
+        #     strong_set = database_api.get_datamuse_set(context, "strong_set")
+        #     if len(strong_set) == 0:
+        #         strong_set = datamuse_api.generate_strong_set(context)
+        #         database_api.insert_datamuse_set(context, strong_set, [])
+        #     else:
+        #         strong_set = strong_set.split(";")
         return self.strict_set
 
     def store_sets(self, context, strong_set, weak_set):
@@ -90,3 +99,12 @@ class LuckGenerator:
         for set in weak_set:
             weak_merged_list += set
         database_api.insert_datamuse_set(context, strong_merged_list, weak_merged_list)
+
+    def scrap(self, username):
+        customer_profile = database_api.get_profile(username)
+        followers = self.get_candidates(self.strict_set, customer_profile)
+        for follower in followers:
+            print(follower)
+            if len(database_api.get_all_tweets_by_username(follower['username'])) < 200:
+                twint_api.get_profile_by_username(follower['username'])
+                twint_api.get_tweets_by_username(follower['username'], self.limit)
