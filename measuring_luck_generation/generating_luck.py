@@ -15,7 +15,8 @@ class LuckGenerator:
                            'web', 'framework', 'embedded', 'alpha version', 'API', 'api', 'app', 'application', 'beta',
                            'version', 'bios', 'qa', 'automation', 'agile', 'scrum', 'demo', 'development', 'device',
                            'emulator', 'freeware', 'open source', 'interface', 'operating systems', 'workflow',
-                           'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR']
+                           'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR', 'code'
+                           'coding']
 
     def generating_luck(self, user, context):
         logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
