@@ -5,6 +5,9 @@ from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
 import matplotlib.pyplot as plt
 from utils import Logger
+import pandas as pd
+from collections import Counter
+
 logger = Logger()
 
 class LuckGenerator:
@@ -18,9 +21,10 @@ class LuckGenerator:
                            'emulator', 'freeware', 'open source', 'interface', 'operating systems', 'workflow',
                            'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR', 'code'
                            'coding']
+        self.luck = []
 
     def generating_luck(self, user, context):
-        logger.luck(f'Generating_luck for a given user : {user} in context of : {context}')
+        logger.luck(f'Generating Luck for a given user : {user} in context of : {context}')
 
         if self.online:
             twint_api.get_profile_by_username(user)
@@ -31,64 +35,48 @@ class LuckGenerator:
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
 
         followers = self.get_candidates(strong_set, customer_profile)
-        logger.luck(f'Candidates length {len(followers)} ,Candidates are : {followers}')
-
-        # The candidates with their score against weak keywords
-        luck = []
+        logger.luck(f'Followers length {len(followers)} , Followers are : {followers}')
 
         # Tie strength tool (By Omer Ganon)
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=user)
-
+        # Luck calculation using TSM
         for follower in followers:
-            # The connection between the customer and given context -> Match,
-            # The connection between the customer and given candidate -> Mismatch
-            relevance, surprise = tie_strength_tool.measure_tie_strength(user, follower['username'], strong_set)
-            if relevance == 0:
+            if self.luck_calculation(tie_strength_tool, user, follower['username'], strong_set) == 0:
                 follower_full_profile = database_api.get_profile(follower['username'])
                 followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
                 for follower_of_follower in followers_of_followers:
-                    relevance_level2, surprise_level2 = tie_strength_tool.measure_tie_strength(user, follower_of_follower['username'], strong_set)
-                    luck.append({'candidate': follower_of_follower, 'surprise': surprise_level2, 'relevance': relevance_level2})
-                    logger.luck(f'[follower_of_follower]:{follower_of_follower} follows {follower}, Relevance between {user} -> {follower_of_follower} is {relevance_level2}')
-                    logger.luck(f'[follower_of_follower]:{follower_of_follower} follows {follower}, Surprise between {user} -> {follower_of_follower} is {surprise_level2}')
-            luck.append({'candidate': follower, 'surprise': surprise, 'relevance': relevance})
-            logger.luck(f'Relevance between {user} -> {follower} is {relevance}')
-            logger.luck(f'Surprise between {user} -> {follower} is {surprise}')
+                    self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set)
 
-        luck.sort(key=lambda x: x['relevance'], reverse=True)
-        logger.debug(f'\nFinished calculating per candidate total results are:')
-        logger.luck(f'Weak ties scores : {luck}')
-        # TODO: Get the highest score candidate: Weak * Strong / NormF
+        self.luck.sort(key=lambda x: x['luck'], reverse=True)
+        logger.luck(f'Weak ties scores : {self.luck}')
 
-        all_username = []
-        all_relevance = []
-        all_surprise = []
-
-        for lu in luck:
-            all_username.append(lu['candidate']['username'])
-            all_relevance.append(lu['relevance'])
-
-        luck.sort(key=lambda x: x['surprise'], reverse=True)
-        for lu in luck:
-            all_surprise.append(lu['surprise'])
-
-        self.draw_graph(all_username, all_relevance, 'followers', 'relevance', 'Relevance Graph')
-        self.draw_graph(all_username, all_surprise, 'followers', 'surprise', 'Surprise Graph')
+        self.draw_table(self.luck)
+        self.draw_graph(self.luck, 'relevance', 'Occurrence', 'Relevance Histogram')
+        self.draw_graph(self.luck, 'surprise', 'Occurrence', 'Surprise Histogram')
+        self.draw_graph(self.luck, 'Followers', 'luck', 'Luck Histogram')
         return 0
+
+    def luck_calculation(self, TSM, user, follower, keywords):
+        relevance, surprise = TSM.measure_tie_strength(user, follower, keywords)
+        NormalF = len(TSM.customer_data['relevance'])
+        luck = relevance * surprise / NormalF
+        logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck})
+        return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
         if self.online:
             twint_api.get_followers(client_twitter_profile[0], self.limit)
         followers_ids = database_api.get_all_followers_ids(client_twitter_profile[0])
-        candidates = []
+        followers = []
         # for follower_id in followers_ids:
         #     for keyword in keywords:
         #         if database_api.get_user_tweets_by_context(follower_id, keyword):
         #             candidates.append(database_api.id_to_username(follower_id))
         for follower_id in followers_ids:
             follower = {'id': follower_id, 'username': database_api.id_to_username(follower_id)}
-            candidates.append(follower)
-        return candidates
+            followers.append(follower)
+        return followers
 
     def generate_strong_set(self, context):
         # TODO: Create dictionary to support complex queries
@@ -134,10 +122,35 @@ class LuckGenerator:
                     twint_api.get_profile_by_username(x['username'])
                     twint_api.get_tweets_by_username(x['username'], self.limit)
 
-    def draw_graph(self, x_dataset, y_dataset, x_label, y_label, subtitle):
+    def draw_histogram(self, data, x_label, y_label, subtitle):
         # TODO: Create set of names and values
+        temp = data.copy()
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.suptitle(subtitle)
+        x_axis = []
+        temp.sort(key=lambda x: x[x_label], reverse=True)
+        print(temp)
+        for i in range(len(temp)):
+            x_axis.append(temp[i][x_label])
+        plt.hist(x_axis, 10)
+        plt.show()
+
+    def draw_graph(self, data, x_label, y_label, subtitle):
+        temp = data.copy()
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.suptitle(subtitle)
+        temp.sort(key=lambda x: x[y_label], reverse=True)
+        x_dataset = []
+        y_dataset = []
+        for i in range(10):
+            x_dataset.append(temp[i][x_label])
+            y_dataset.append(temp[i][y_label])
         plt.plot(x_dataset, y_dataset)
         plt.show()
+
+    def draw_table(self, data):
+        df = pd.DataFrame.from_dict(data)
+        print(df)
+        df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
