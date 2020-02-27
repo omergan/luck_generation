@@ -6,7 +6,6 @@ from measuring_luck_generation import datamuse_api
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
-from collections import Counter
 
 logger = Logger()
 
@@ -51,9 +50,9 @@ class LuckGenerator:
         logger.luck(f'Weak ties scores : {self.luck}')
 
         self.draw_table(self.luck)
-        self.draw_histogram(self.luck, 'relevance', 'Occurrence', 'Relevance Histogram')
-        self.draw_histogram(self.luck, 'surprise', 'Occurrence', 'Surprise Histogram')
-        self.draw_graph(self.luck, 'Followers', 'luck', 'Luck Histogram')
+        self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
+        self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
+        self.draw_graph(self.luck, 'follower', 'luck', 'Luck Graph')
         return 0
 
     def luck_calculation(self, TSM, user, follower, keywords):
