@@ -3,6 +3,7 @@ import twint_api
 from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
+import matplotlib.pyplot as plt
 from utils import Logger
 logger = Logger()
 
@@ -57,7 +58,8 @@ class LuckGenerator:
         luck.sort(key=lambda x: x['relevance'], reverse=True)
         logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Weak ties scores : {luck}')
-
+        for lu in luck:
+            logger.luck(f'luck score : {lu}')
         # TODO: Get the highest score candidate: Weak * Strong
 
         return 0
@@ -120,3 +122,5 @@ class LuckGenerator:
                     twint_api.get_profile_by_username(x['username'])
                     twint_api.get_tweets_by_username(x['username'], self.limit)
 
+    def draw_graph(self, dataset):
+        pass
