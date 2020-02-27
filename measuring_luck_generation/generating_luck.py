@@ -43,11 +43,13 @@ class LuckGenerator:
             # The connection between the customer and given candidate -> Mismatch
             relevance, surprise = tie_strength_tool.measure_tie_strength(user, follower['username'], strong_set)
             if relevance == 0:
-                followers_of_followers = database_api.get_all_followers_ids(follower['id'])
+                follower_full_profile = database_api.get_profile(follower['username'])
+                followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
                 for follower_of_follower in followers_of_followers:
-                    luck.append({'candidate': follower_of_follower, 'surprise': surprise, 'relevance': relevance})
-                    logger.luck(f'Relevance between {user} -> {follower_of_follower} is {relevance}')
-                    logger.luck(f'Surprise between {user} -> {follower_of_follower} is {surprise}')
+                    relevance_level2, surprise_level2 = tie_strength_tool.measure_tie_strength(user, follower_of_follower['username'], strong_set)
+                    luck.append({'candidate': follower_of_follower, 'surprise': surprise_level2, 'relevance': relevance_level2})
+                    logger.luck(f'[follower_of_follower]:{follower_of_follower} follows {follower}, Relevance between {user} -> {follower_of_follower} is {relevance_level2}')
+                    logger.luck(f'[follower_of_follower]:{follower_of_follower} follows {follower}, Surprise between {user} -> {follower_of_follower} is {surprise_level2}')
             luck.append({'candidate': follower, 'surprise': surprise, 'relevance': relevance})
             logger.luck(f'Relevance between {user} -> {follower} is {relevance}')
             logger.luck(f'Surprise between {user} -> {follower} is {surprise}')
