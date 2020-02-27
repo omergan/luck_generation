@@ -51,8 +51,8 @@ class LuckGenerator:
         logger.luck(f'Weak ties scores : {self.luck}')
 
         self.draw_table(self.luck)
-        self.draw_graph(self.luck, 'relevance', 'Occurrence', 'Relevance Histogram')
-        self.draw_graph(self.luck, 'surprise', 'Occurrence', 'Surprise Histogram')
+        self.draw_histogram(self.luck, 'relevance', 'Occurrence', 'Relevance Histogram')
+        self.draw_histogram(self.luck, 'surprise', 'Occurrence', 'Surprise Histogram')
         self.draw_graph(self.luck, 'Followers', 'luck', 'Luck Histogram')
         return 0
 
