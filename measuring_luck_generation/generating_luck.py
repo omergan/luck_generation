@@ -58,10 +58,22 @@ class LuckGenerator:
         luck.sort(key=lambda x: x['relevance'], reverse=True)
         logger.debug(f'\nFinished calculating per candidate total results are:')
         logger.luck(f'Weak ties scores : {luck}')
-        for lu in luck:
-            logger.luck(f'luck score : {lu}')
-        # TODO: Get the highest score candidate: Weak * Strong
+        # TODO: Get the highest score candidate: Weak * Strong / NormF
 
+        all_username = []
+        all_relevance = []
+        all_surprise = []
+
+        for lu in luck:
+            all_username.append(lu['candidate']['username'])
+            all_relevance.append(lu['relevance'])
+
+        luck.sort(key=lambda x: x['surprise'], reverse=True)
+        for lu in luck:
+            all_surprise.append(lu['surprise'])
+
+        self.draw_graph(all_username, all_relevance, 'followers', 'relevance', 'Relevance Graph')
+        self.draw_graph(all_username, all_surprise, 'followers', 'surprise', 'Surprise Graph')
         return 0
 
     def get_candidates(self, keywords, client_twitter_profile):
@@ -122,12 +134,10 @@ class LuckGenerator:
                     twint_api.get_profile_by_username(x['username'])
                     twint_api.get_tweets_by_username(x['username'], self.limit)
 
-    def draw_graph(self, dataset, x_label, y_label, subtitle):
+    def draw_graph(self, x_dataset, y_dataset, x_label, y_label, subtitle):
         # TODO: Create set of names and values
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         plt.suptitle(subtitle)
-        names = dataset['username']
-        values = dataset['values']
-        plt.plot(names, values)
+        plt.plot(x_dataset, y_dataset)
         plt.show()
