@@ -122,5 +122,12 @@ class LuckGenerator:
                     twint_api.get_profile_by_username(x['username'])
                     twint_api.get_tweets_by_username(x['username'], self.limit)
 
-    def draw_graph(self, dataset):
-        pass
+    def draw_graph(self, dataset, x_label, y_label, subtitle):
+        # TODO: Create set of names and values
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.suptitle(subtitle)
+        names = dataset['username']
+        values = dataset['values']
+        plt.plot(names, values)
+        plt.show()
