@@ -6,6 +6,7 @@ from measuring_luck_generation import datamuse_api
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
+import numpy as np
 
 logger = Logger()
 
@@ -40,11 +41,11 @@ class LuckGenerator:
         tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=user)
         # Luck calculation using TSM
         for follower in followers:
-            if self.luck_calculation(tie_strength_tool, user, follower['username'], strong_set) == 0:
-                follower_full_profile = database_api.get_profile(follower['username'])
-                followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
-                for follower_of_follower in followers_of_followers:
-                    self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set)
+            self.luck_calculation(tie_strength_tool, user, follower['username'], strong_set, False)
+            follower_full_profile = database_api.get_profile(follower['username'])
+            followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
+            for follower_of_follower in followers_of_followers:
+                self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set, True)
 
         self.luck.sort(key=lambda x: x['luck'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
@@ -53,14 +54,15 @@ class LuckGenerator:
         self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
         self.draw_graph(self.luck, 'follower', 'luck', 'Luck Graph')
+        self.draw_mosaic(self.luck)
         return 0
 
-    def luck_calculation(self, TSM, user, follower, keywords):
+    def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
         relevance, surprise = TSM.measure_tie_strength(user, follower, keywords)
         NormalF = len(TSM.customer_data['relevance'])
         luck = relevance * surprise / NormalF
         logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck})
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
@@ -129,7 +131,6 @@ class LuckGenerator:
         plt.suptitle(subtitle)
         x_axis = []
         temp.sort(key=lambda x: x[x_label], reverse=True)
-        print(temp)
         for i in range(len(temp)):
             x_axis.append(temp[i][x_label])
         plt.hist(x_axis, 10)
@@ -153,3 +154,21 @@ class LuckGenerator:
         df = pd.DataFrame.from_dict(data)
         print(df)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
+
+    def draw_mosaic(self, data):
+        max_surprise = max([x['surprise'] for x in data if x['surprise'] > 0])
+        max_relevance = max([x['relevance'] for x in data if x['relevance'] > 0])
+        surprise = list(range(1, max_surprise))
+        relevance = list(range(1, max_relevance))
+        print(surprise)
+        print(relevance)
+        NormF = data[0]['normal']
+        dims = (len(relevance), len(surprise))
+        matrix = np.zeros(dims)
+        for i in range(len(surprise)):
+            for j in range(len(relevance)):
+                matrix[i, j] = surprise[i] * relevance[j] / NormF
+        plt.matshow(matrix)
+        plt.xlabel('surprise')
+        plt.ylabel('relevance')
+        plt.show()
