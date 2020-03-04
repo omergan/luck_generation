@@ -13,5 +13,6 @@ if __name__ == '__main__':
     logger.debug("Starting main program!\n")
     luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
     luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
-    # luck_generator.scrap("Charliedysonrec")
+    # luck_generator.scrap("MizrahiMichael")
+    # luck_generator.draw_mosaic(None)
     logger.debug("\nEnding main program!")

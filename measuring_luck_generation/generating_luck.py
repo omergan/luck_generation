@@ -6,6 +6,7 @@ from measuring_luck_generation import datamuse_api
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
+import numpy as np
 
 logger = Logger()
 
@@ -53,6 +54,7 @@ class LuckGenerator:
         self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
         self.draw_graph(self.luck, 'follower', 'luck', 'Luck Graph')
+        self.draw_mosaic(self.luck)
         return 0
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
@@ -60,7 +62,7 @@ class LuckGenerator:
         NormalF = len(TSM.customer_data['relevance'])
         luck = relevance * surprise / NormalF
         logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'follower_of_follower': follower_of_follower})
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
@@ -153,4 +155,23 @@ class LuckGenerator:
 
     def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
+        print(df)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
+
+    def draw_mosaic(self, data):
+        max_surprise = max([x['surprise'] for x in data if x['surprise'] > 0])
+        max_relevance = max([x['relevance'] for x in data if x['relevance'] > 0])
+        surprise = list(range(1, max_surprise))
+        relevance = list(range(1, max_relevance))
+        print(surprise)
+        print(relevance)
+        NormF = data[0]['normal']
+        dims = (len(relevance), len(surprise))
+        matrix = np.zeros(dims)
+        for i in range(len(surprise)):
+            for j in range(len(relevance)):
+                matrix[i, j] = surprise[i] * relevance[j] / NormF
+        plt.matshow(matrix)
+        plt.xlabel('surprise')
+        plt.ylabel('relevance')
+        plt.show()
