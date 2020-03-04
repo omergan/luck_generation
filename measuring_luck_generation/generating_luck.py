@@ -47,22 +47,24 @@ class LuckGenerator:
             for follower_of_follower in followers_of_followers:
                 self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set, True)
 
-        self.luck.sort(key=lambda x: x['luck'], reverse=True)
+        self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
 
         self.draw_table(self.luck)
         self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
-        self.draw_graph(self.luck, 'follower', 'luck', 'Luck Graph')
-        self.draw_mosaic(self.luck)
+        self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
+        # self.draw_mosaic(self.luck)
         return 0
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
-        relevance, surprise = TSM.measure_tie_strength(user, follower, keywords)
-        NormalF = len(TSM.customer_data['relevance'])
-        luck = relevance * surprise / NormalF
+        relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
+        NormalF = len(follower_data['relevance']) if len(follower_data['relevance']) != 0 else 1
+        relevance = relevance / NormalF
+        surprise = surprise / NormalF
+        luck = relevance * surprise
         logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower})
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
@@ -139,20 +141,6 @@ class LuckGenerator:
         plt.hist(x_axis, 10)
         plt.show()
 
-    def draw_graph(self, data, x_label, y_label, subtitle):
-        temp = data.copy()
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.suptitle(subtitle)
-        temp.sort(key=lambda x: x[y_label], reverse=True)
-        x_dataset = []
-        y_dataset = []
-        for i in range(10):
-            x_dataset.append(temp[i][x_label])
-            y_dataset.append(temp[i][y_label])
-        plt.plot(x_dataset, y_dataset)
-        plt.show()
-
     def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
         print(df)
@@ -174,4 +162,18 @@ class LuckGenerator:
         plt.matshow(matrix)
         plt.xlabel('surprise')
         plt.ylabel('relevance')
+        plt.show()
+
+    def draw_graph(self, data, x_label, y_label, subtitle):
+        temp = data.copy()
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.suptitle(subtitle)
+        temp.sort(key=lambda x: x[y_label], reverse=True)
+        x_dataset = []
+        y_dataset = []
+        for d in data:
+            x_dataset.append(d[x_label])
+            y_dataset.append(d[y_label])
+        plt.plot(x_dataset, y_dataset)
         plt.show()
