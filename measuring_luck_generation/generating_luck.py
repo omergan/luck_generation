@@ -59,7 +59,10 @@ class LuckGenerator:
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
         relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
-        NormalF = len(follower_data['relevance']) if len(follower_data['relevance']) != 0 else 1
+        if len(follower_data['relevance']) == 0:
+            NormalF = 1
+        else:
+            NormalF = len(follower_data['relevance'].values())
         relevance = relevance / NormalF
         surprise = surprise / NormalF
         luck = relevance * surprise
