@@ -60,14 +60,25 @@ class LuckGenerator:
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
         relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
         if len(follower_data['relevance']) == 0:
-            NormalF = 1
-        else:
-            NormalF = len(follower_data['relevance'].values())
-        relevance = relevance / NormalF
-        surprise = surprise / NormalF
+            return 0
+        NormR = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
+        NormS = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
+        relevance = relevance / NormR
+        surprise = surprise / NormS
         luck = relevance * surprise
+        cust_rel = 0
+        fol_rel = 0
+
+        for keyword in keywords:
+            if keyword in follower_data['relevance'] and keyword not in TSM.customer_data['relevance']:
+                fol_rel += follower_data['relevance'][keyword]
+            elif keyword not in follower_data['relevance'] and keyword in TSM.customer_data['relevance']:
+                cust_rel += TSM.customer_data['relevance'][keyword]
+
+
         logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
+
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormS': NormS, 'NormR': NormR, 'cust_rel': cust_rel, 'fol_rel': fol_rel, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):

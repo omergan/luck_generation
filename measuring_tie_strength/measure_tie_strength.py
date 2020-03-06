@@ -36,7 +36,7 @@ class TieStrengthTool:
         relevance = 0
         for keyword in keywords:
             if keyword in candidate_relevance and keyword in customer_relevance:
-                relevance = candidate_relevance[keyword] + customer_relevance[keyword]
+                relevance += candidate_relevance[keyword] + customer_relevance[keyword]
 
         return relevance
 
