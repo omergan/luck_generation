@@ -40,21 +40,21 @@ with open('heatmap.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerows(res)
 
-###########################################################
+##########################################################
  # TODO : fix color range.
-# df = pd.read_csv('heatmap.csv')
-# heatmap = ((np.asarray(df)))
-# fig, ax = plt.subplots(figsize=(60,60))
-# title = "Luck Generation Heatmap"
-#
-# plt.title(title, fontsize=18)
-# ttl = ax.title
-# ttl.set_position([0.5, 1.05])
-#
-# ax.set_xticks([])
-# ax.set_yticks([])
-# ax.axis('off')
-#
-# sns.heatmap(heatmap, annot=heatmap, fmt="", cmap='RdYlGn', linewidths=0.30, ax=ax)
-# sns.heatmap(df, cmap="YlGnBu")
-# plt.show()
+df = pd.read_csv('heatmap.csv')
+heatmap = ((np.asarray(df)))
+fig, ax = plt.subplots(figsize=(60,60))
+title = "Luck Generation Heatmap"
+
+plt.title(title, fontsize=18)
+ttl = ax.title
+ttl.set_position([0.5, 1.05])
+
+ax.set_xticks([])
+ax.set_yticks([])
+ax.axis('off')
+
+sns.heatmap(heatmap, annot=heatmap, fmt="", cmap='RdYlGn', linewidths=0.30, ax=ax)
+sns.heatmap(df, cmap="YlGnBu")
+plt.show()
