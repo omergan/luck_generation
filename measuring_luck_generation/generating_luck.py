@@ -1,8 +1,11 @@
+from geographiclib.geomath import Math
+
 import database_api
 import twint_api
 from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
+import math
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
@@ -63,9 +66,11 @@ class LuckGenerator:
         if len(follower_data['relevance']) == 0:
             return 0
         NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
-        relevance = (relevance / NormF)
-        surprise = (surprise / NormF)
-        luck = relevance * surprise
+        R = relevance
+        C = (R/NormF + surprise/NormF) / 2
+        relevance = math.exp(-1 * R/NormF)
+        surprise = math.exp(R/NormF - surprise/NormF)
+        luck = relevance + surprise
         cust_rel = 0
         fol_rel = 0
 
@@ -75,7 +80,7 @@ class LuckGenerator:
             elif keyword not in follower_data['relevance'] and keyword in TSM.customer_data['relevance']:
                 cust_rel += TSM.customer_data['relevance'][keyword]
 
-        logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
+        logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
 
         self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'cust_rel': cust_rel, 'fol_rel': fol_rel, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
