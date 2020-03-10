@@ -36,7 +36,7 @@ class TieStrengthTool:
         relevance = 0
         for keyword in keywords:
             if keyword in candidate_relevance and keyword in customer_relevance:
-                relevance = candidate_relevance[keyword] + customer_relevance[keyword]
+                relevance += candidate_relevance[keyword] + customer_relevance[keyword]
 
         return relevance
 
@@ -60,7 +60,7 @@ class TieStrengthTool:
         self.keywords_frequency(candidate_data, keywords)
         relevance_unity = self.measure_relevance(candidate_data, self.customer_data, keywords)
         symmetric_diff = self.measure_surprise(candidate_data, self.customer_data, keywords)
-        return relevance_unity, symmetric_diff
+        return relevance_unity, symmetric_diff, candidate_data
 
     def communication(self, data):
         # Unpack data

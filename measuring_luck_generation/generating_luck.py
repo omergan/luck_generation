@@ -1,8 +1,11 @@
+from geographiclib.geomath import Math
+
 import database_api
 import twint_api
 from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
+import math
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
@@ -47,22 +50,39 @@ class LuckGenerator:
             for follower_of_follower in followers_of_followers:
                 self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set, True)
 
-        self.luck.sort(key=lambda x: x['luck'], reverse=True)
+        self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
 
         self.draw_table(self.luck)
         self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
-        self.draw_graph(self.luck, 'follower', 'luck', 'Luck Graph')
-        self.draw_mosaic(self.luck)
+        self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
+        self.draw_graph(self.luck, 'surprise', 'luck', 'Surprise X Luck Graph')
+        # self.draw_mosaic(self.luck)
         return 0
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
-        relevance, surprise = TSM.measure_tie_strength(user, follower, keywords)
-        NormalF = len(TSM.customer_data['relevance'])
-        luck = relevance * surprise / NormalF
-        logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}')
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'normal': NormalF, 'follower of follower': follower_of_follower})
+        relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
+        if len(follower_data['relevance']) == 0:
+            return 0
+        NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
+        R = relevance
+        C = (R/NormF + surprise/NormF) / 2
+        relevance = math.exp(-1 * R/NormF)
+        surprise = math.exp(R/NormF - surprise/NormF)
+        luck = relevance + surprise
+        cust_rel = 0
+        fol_rel = 0
+
+        for keyword in keywords:
+            if keyword in follower_data['relevance'] and keyword not in TSM.customer_data['relevance']:
+                fol_rel += follower_data['relevance'][keyword]
+            elif keyword not in follower_data['relevance'] and keyword in TSM.customer_data['relevance']:
+                cust_rel += TSM.customer_data['relevance'][keyword]
+
+        logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
+
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'cust_rel': cust_rel, 'fol_rel': fol_rel, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
@@ -106,7 +126,9 @@ class LuckGenerator:
         database_api.insert_datamuse_set(context, strong_merged_list, weak_merged_list)
 
     def scrap(self, username):
+        twint_api.get_profile_by_username(username)
         customer_profile = database_api.get_profile(username)
+        twint_api.get_followers(customer_profile[0], self.limit)
         followers = self.get_candidates(self.strict_set, customer_profile)
         for i, follower in enumerate(followers):
             logger.debug(f'Scraping a customer direct follower {follower["username"]}')
@@ -122,6 +144,7 @@ class LuckGenerator:
                 if len(database_api.get_all_tweets_by_username(x['username'])) < 30:
                     twint_api.get_profile_by_username(x['username'])
                     twint_api.get_tweets_by_username(x['username'], self.limit)
+                    # twint_api.get_favorites_by_username(x['username'], self.limit)
 
     def draw_histogram(self, data, x_label, y_label, subtitle):
         # TODO: Create set of names and values
@@ -134,20 +157,6 @@ class LuckGenerator:
         for i in range(len(temp)):
             x_axis.append(temp[i][x_label])
         plt.hist(x_axis, 10)
-        plt.show()
-
-    def draw_graph(self, data, x_label, y_label, subtitle):
-        temp = data.copy()
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.suptitle(subtitle)
-        temp.sort(key=lambda x: x[y_label], reverse=True)
-        x_dataset = []
-        y_dataset = []
-        for i in range(10):
-            x_dataset.append(temp[i][x_label])
-            y_dataset.append(temp[i][y_label])
-        plt.plot(x_dataset, y_dataset)
         plt.show()
 
     def draw_table(self, data):
@@ -171,4 +180,18 @@ class LuckGenerator:
         plt.matshow(matrix)
         plt.xlabel('surprise')
         plt.ylabel('relevance')
+        plt.show()
+
+    def draw_graph(self, data, x_label, y_label, subtitle):
+        temp = data.copy()
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.suptitle(subtitle)
+        temp.sort(key=lambda x: x[y_label], reverse=True)
+        x_dataset = []
+        y_dataset = []
+        for d in data:
+            x_dataset.append(d[x_label])
+            y_dataset.append(d[y_label])
+        plt.plot(x_dataset, y_dataset)
         plt.show()

@@ -4,7 +4,7 @@ import twint_api
 from measuring_luck_generation import datamuse_api
 import database_api
 
-LIMIT = 200
+LIMIT = 1
 
 from utils import Logger
 logger = Logger()
