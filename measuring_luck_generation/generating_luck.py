@@ -176,11 +176,11 @@ class LuckGenerator:
         print(surprise)
         print(relevance)
         NormF = data[0]['normal']
-        dims = (len(relevance), len(surprise))
+        dims = (len(surprise), len(relevance))
         matrix = np.zeros(dims)
-        for i in range(len(surprise)):
-            for j in range(len(relevance)):
-                matrix[i, j] = surprise[i] * relevance[j] / NormF
+        for i in range(len(relevance)):
+            for j in range(len(surprise)):
+                matrix[i, j] = relevance[i] * surprise[j] / NormF
         plt.matshow(matrix)
         plt.xlabel('surprise')
         plt.ylabel('relevance')
