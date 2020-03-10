@@ -63,30 +63,26 @@ class LuckGenerator:
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
         relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
-        if len(follower_data['relevance']) == 0:
-            return 0
-        NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
-        if relevance >= surprise:
-            R = relevance
-            relevance = math.exp(-1 * R/NormF)
-            surprise = math.exp(R/NormF - surprise/NormF)
-        else:
-            S = surprise
-            surprise = math.exp(-1 * S/NormF)
-            relevance = math.exp(S/NormF - relevance/NormF)
-        luck = relevance + surprise
-        cust_rel = 0
-        fol_rel = 0
 
-        for keyword in keywords:
-            if keyword in follower_data['relevance'] and keyword not in TSM.customer_data['relevance']:
-                fol_rel += follower_data['relevance'][keyword]
-            elif keyword not in follower_data['relevance'] and keyword in TSM.customer_data['relevance']:
-                cust_rel += TSM.customer_data['relevance'][keyword]
+        NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values())
+        relevance = relevance / NormF
+        surprise = surprise / NormF
+
+        R = relevance
+        S = surprise
+
+        if relevance > surprise:
+            surprise = math.exp(R - surprise)
+            relevance = math.exp(-1 * R)
+        else:
+            surprise = math.exp(-1 * S)
+            relevance = math.exp(S - relevance)
+
+        luck = relevance + surprise
 
         logger.luck(f'Tie strength between {user} -> {follower} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
 
-        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'cust_rel': cust_rel, 'fol_rel': fol_rel, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
+        self.luck.append({'follower': follower, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'R-S': R - surprise, 'S-R': S - relevance, 'follower of follower': follower_of_follower, 'customer relevance set': TSM.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, keywords, client_twitter_profile):
