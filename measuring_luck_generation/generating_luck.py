@@ -66,10 +66,14 @@ class LuckGenerator:
         if len(follower_data['relevance']) == 0:
             return 0
         NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
-        R = relevance
-        C = (R/NormF + surprise/NormF) / 2
-        relevance = math.exp(-1 * R/NormF)
-        surprise = math.exp(R/NormF - surprise/NormF)
+        if relevance >= surprise:
+            R = relevance
+            relevance = math.exp(-1 * R/NormF)
+            surprise = math.exp(R/NormF - surprise/NormF)
+        else:
+            S = surprise
+            surprise = math.exp(-1 * S/NormF)
+            relevance = math.exp(S/NormF - relevance/NormF)
         luck = relevance + surprise
         cust_rel = 0
         fol_rel = 0
