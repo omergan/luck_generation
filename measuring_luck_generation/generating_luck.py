@@ -6,6 +6,7 @@ from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
 import math
+from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
@@ -54,8 +55,8 @@ class LuckGenerator:
         logger.luck(f'Weak ties scores : {self.luck}')
 
         self.draw_table(self.luck)
-        self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
-        self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
+        # self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
+        # self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
         self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
         self.draw_graph(self.luck, 'surprise', 'luck', 'Surprise X Luck Graph')
         # self.draw_mosaic(self.luck)
@@ -65,12 +66,20 @@ class LuckGenerator:
         relevance, surprise, follower_data = TSM.measure_tie_strength(user, follower, keywords)
         if len(follower_data['relevance']) == 0:
             return 0
-        NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values()) + relevance
-        R = relevance
-        C = (R/NormF + surprise/NormF) / 2
-        relevance = math.exp(-1 * R/NormF)
-        surprise = math.exp(R/NormF - surprise/NormF)
-        luck = relevance + surprise
+        NormF = sum(follower_data['relevance'].values()) + sum(TSM.customer_data['relevance'].values())
+        relevance = relevance / NormF
+        surprise = surprise / NormF
+        # luck = math.exp(-1 * max(relevance, surprise)) + math.exp(max(relevance, surprise) - min(relevance, surprise))
+        if relevance > surprise:
+            R = relevance
+            relevance = math.exp(-1 * R)
+            surprise = math.exp(R - surprise)
+        else:
+            S = surprise
+            surprise = math.exp(-1 * S)
+            relevance = math.exp(S - relevance)
+        luck = surprise + relevance
+
         cust_rel = 0
         fol_rel = 0
 
@@ -161,26 +170,10 @@ class LuckGenerator:
 
     def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
-        print(df)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
 
     def draw_mosaic(self, data):
-        max_surprise = max([x['surprise'] for x in data if x['surprise'] > 0])
-        max_relevance = max([x['relevance'] for x in data if x['relevance'] > 0])
-        surprise = list(range(1, max_surprise))
-        relevance = list(range(1, max_relevance))
-        print(surprise)
-        print(relevance)
-        NormF = data[0]['normal']
-        dims = (len(surprise), len(relevance))
-        matrix = np.zeros(dims)
-        for i in range(len(relevance)):
-            for j in range(len(surprise)):
-                matrix[i, j] = relevance[i] * surprise[j] / NormF
-        plt.matshow(matrix)
-        plt.xlabel('surprise')
-        plt.ylabel('relevance')
-        plt.show()
+        pass
 
     def draw_graph(self, data, x_label, y_label, subtitle):
         temp = data.copy()
@@ -193,5 +186,5 @@ class LuckGenerator:
         for d in data:
             x_dataset.append(d[x_label])
             y_dataset.append(d[y_label])
-        plt.plot(x_dataset, y_dataset)
+        plt.plot(x_dataset, y_dataset, 'ro', x_dataset, y_dataset, '.-')
         plt.show()
