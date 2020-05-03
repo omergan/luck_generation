@@ -49,7 +49,7 @@ class LuckGenerator:
         self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
 
-        self.draw_table(self.luck)
+        self.export_to_excel(self.luck)
         # self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         # self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
         # self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
@@ -154,6 +154,6 @@ class LuckGenerator:
             except Exception:
                 print(Exception)
 
-    def draw_table(self, data):
+    def export_to_excel(self, data):
         df = pd.DataFrame.from_dict(data)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
