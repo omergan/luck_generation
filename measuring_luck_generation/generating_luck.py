@@ -1,16 +1,11 @@
-from geographiclib.geomath import Math
-
 import database_api
 import twint_api
 from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
 import math
-from mpl_toolkits import mplot3d
-import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
-import numpy as np
 
 logger = Logger()
 
@@ -57,8 +52,8 @@ class LuckGenerator:
         self.draw_table(self.luck)
         # self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
         # self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
-        self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
-        self.draw_graph(self.luck, 'surprise', 'luck', 'Surprise X Luck Graph')
+        # self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
+        # self.draw_graph(self.luck, 'surprise', 'luck', 'Surprise X Luck Graph')
         # self.draw_mosaic(self.luck)
         return 0
 
@@ -83,16 +78,6 @@ class LuckGenerator:
 
         r_s = R - S
         s_r = S - R
-
-        if r_s == 0 or s_r == 0:
-            return
-
-        # if relevance > surprise:
-        #     surprise = math.exp(-1 * (R - surprise))
-        #     relevance = math.exp(R)
-        # else:
-        #     surprise = math.exp(S)
-        #     relevance = math.exp(-1 * (S - relevance))
 
         surprise = math.exp(-1 * (R - surprise))
         relevance = math.exp(R)
@@ -169,37 +154,6 @@ class LuckGenerator:
             except Exception:
                 print(Exception)
 
-
-    def draw_histogram(self, data, x_label, y_label, subtitle):
-        # TODO: Create set of names and values
-        temp = data.copy()
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.suptitle(subtitle)
-        x_axis = []
-        temp.sort(key=lambda x: x[x_label], reverse=True)
-        for i in range(len(temp)):
-            x_axis.append(temp[i][x_label])
-        plt.hist(x_axis, 10)
-        plt.show()
-
     def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
-
-    def draw_mosaic(self, data):
-        pass
-
-    def draw_graph(self, data, x_label, y_label, subtitle):
-        temp = data.copy()
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.suptitle(subtitle)
-        temp.sort(key=lambda x: x[y_label], reverse=True)
-        x_dataset = []
-        y_dataset = []
-        for d in data:
-            x_dataset.append(d[x_label])
-            y_dataset.append(d[y_label])
-        plt.plot(x_dataset, y_dataset, 'ro', x_dataset, y_dataset, '.-')
-        plt.show()
