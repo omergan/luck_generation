@@ -1,11 +1,13 @@
 import pprint
 from collections import defaultdict
+import database_api as db
 
 class Network(object):
     """ Graph data structure, undirected by default. """
-    def __init__(self, connections, directed=False):
+    def __init__(self, directed=True):
         self._graph = defaultdict(set)
         self._directed = directed
+        connections = self.load_connections()
         self.add_connections(connections)
 
     def add_connections(self, connections):
@@ -32,6 +34,5 @@ class Network(object):
             pass
 
     def load_connections(self):
-        connections = []
-
+        connections = db.get_all_connections()
         return connections

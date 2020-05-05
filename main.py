@@ -5,6 +5,7 @@ from measuring_luck_generation import datamuse_api
 import database_api
 from pprint import pprint
 from measuring_tie_strength.models import User, Tweet
+from measuring_tie_strength.graph import Network
 LIMIT = 1
 
 from utils import Logger
@@ -15,6 +16,7 @@ if __name__ == '__main__':
     for tweet in user.get_tweets():
         print(tweet)
 
+    network = Network()
 
     # logger.debug("Starting main program!\n")
     # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
