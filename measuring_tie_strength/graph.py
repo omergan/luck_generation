@@ -30,3 +30,8 @@ class Network(object):
             del self._graph[node]
         except KeyError:
             pass
+
+    def load_connections(self):
+        connections = []
+
+        return connections
