@@ -5,15 +5,22 @@ import networkx
 import networkx as nx
 import database_api as db
 import pandas as pd
+from measuring_tie_strength.models import User
 
 class Network(object):
     """ Graph data structure, undirected by default. """
-    def __init__(self, directed=True):
-        self.graph = nx.Graph()
+    def __init__(self, directed=False):
+        self.user_dict = {}
+        self.graph = nx.DiGraph() if directed else nx.Graph()
         self.graph.add_edges_from(self.load_connections())
 
     def load_connections(self):
         connections = db.get_all_connections()
+        user_connections = {}
+        for x,y in connections:
+            user_connections[x] = User(x, True)
+            user_connections[y] = User(y, True)
+        self.user_dict = user_connections
         return connections
 
     def draw(self):
@@ -24,10 +31,10 @@ class Network(object):
         return [x for x in self.graph.neighbors(n)]
 
     def get_common_neighbours(self, u, v):
-        return list(nx.common_neighbors(self.graph, u, v))
+        return [self.user_dict[x] for x in nx.common_neighbors(self.graph, u, v)]
 
     def get_shortest_path(self, u, v):
-        return nx.shortest_path(self.graph, u, v)
+        return [self.user_dict[x] for x in list(nx.shortest_path(self.graph, u, v))]
 
     def count_common_neighbours(self):
         neighbours = []
@@ -62,7 +69,7 @@ class Network(object):
                     try:
                         shortest = [x for x in nx.shortest_path(self.graph, x, y)]
                     except networkx.exception.NetworkXNoPath:
-                        shortest = []
+                        shortest = [] # TODO : add length of 1 if has edge
                     if len(shortest) >= 0:
                         if len(shortest) in shortest_count:
                             shortest_count[len(shortest)] = shortest_count[len(shortest)] + 1

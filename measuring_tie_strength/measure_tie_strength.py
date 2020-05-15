@@ -68,18 +68,18 @@ class TieStrengthTool:
         symmetric_diff = self.measure_surprise(candidate_data, self.customer_data, keywords)
         return relevance_unity, symmetric_diff, candidate_data
 
-    def create_network(self):
-        network = Network()
+    def create_network(self, directed=False):
+        network = Network(directed=directed)
         self.network = network
 
     def measure_topology(self, candidate, target):
         logger.debug(f'Measuring topology for {candidate.username} and {target.username}')
         # Common neighbours
-        common_neighbours = self.network.get_common_neighbours(candidate.id, target.id)
-        logger.tie(f'Common neighbours: {common_neighbours}')
+        # common_neighbours = self.network.get_common_neighbours(candidate.id, target.id)
+        # logger.tie(f'Common neighbours: {[str(x) for x in common_neighbours]}')
         # Shortest path
         shortest_path = self.network.get_shortest_path(candidate.id, target.id)
-        logger.tie(f'Shorter path: {shortest_path}')
+        logger.tie(f'Shorter path: {[str(x) for x in shortest_path]}')
 
 
 """

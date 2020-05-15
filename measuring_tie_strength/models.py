@@ -1,9 +1,12 @@
 import database_api as db
 
 class User(object):
-    def __init__(self, username):
+    def __init__(self, user, is_id=False):
         """ Initialize a user instance with data """
-        user_profile = db.get_profile(username)
+        if is_id:
+            user_profile = db.get_profile_by_id(user)
+        else:
+            user_profile = db.get_profile(user)
         self.id = user_profile[0]
         self.name = user_profile[2]
         self.username = user_profile[3]
@@ -28,7 +31,8 @@ class User(object):
         return tweets_obj
 
     def __str__(self):
-        return f'{self.id} : {self.name}'
+        return f'{self.name}'
+        # return f'{self.id} : {self.name}'
 
 class Tweet(object):
     def __init__(self, tweet):
