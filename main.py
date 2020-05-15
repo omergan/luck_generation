@@ -7,14 +7,13 @@ from pprint import pprint
 import numpy as np
 import matplotlib.pyplot as plt
 from measuring_tie_strength.models import User, Tweet
-from measuring_tie_strength.graph import Network
+from measuring_tie_strength import measure_tie_strength as tsm
 LIMIT = 1
 
 from utils import Logger
 logger = Logger()
 
 
-import networkx as nx
 def map_connections(graph):
     key_indexes = {}
     value_indexes = {}
@@ -42,33 +41,31 @@ def count_followers(graph):
     for key in graph:
         print(f'{key} : {len(graph[key])}')
 
-def networkx_things():
-    # with open('datasets/edge_list.txt') as f:
-    #     for row in f:
-    #         print(row)
-    g = nx.read_edgelist('datasets/edge_list.txt', create_using=nx.Graph(), nodetype=str)
-    nx.draw(g)
-    plt.show()
-    # f = open("datasets/edge_list.txt", "w")
-    # i=1
-    # for key in graph:
-    #     for value in graph[key]:
-    #         f.write('{} {}\n'.format(key, value))
-    #         print(f'{i} {key} {value}')
-    #         i += 1
-    # f.close()
-    # pprint(graph)
-
 
 if __name__ == '__main__':
-    user = User("Charliedysonrec")
-    network = Network()
-    graph = network._graph
+    users = []
+    users.append(User("Charliedysonrec")) # 800589492
+    users.append(User("uriadoni"))  # 167900828
+    users.append(User("cakiralp1"))  # 800589492
+    users.append(User("PennanenMaria"))  # 1587925376
+    users.append(User("accelerator_ffm"))  # 4186469475
+
+    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
+    tsmtool.create_network()
+    # tsmtool.network.draw()
+    # user_neighbours = tsmtool.network.get_neighbours(user.id)
+    # tsmtool.network.get_shortest_path(66094718, 125991668)
+    # tsmtool.network.count_common_neighbours()
+    # tsmtool.network.count_shortest_path()
+
+    tsmtool.measure_topology(users[1], users[2])
+    tsmtool.measure_topology(users[3], users[4])
+
+
     # count_followers(graph)
     # map_connections(graph)
     # networkx_things()
-    nx.draw(graph)
-    plt.show()  # display
+
     # logger.debug("Starting main program!\n")
     # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
     # # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
