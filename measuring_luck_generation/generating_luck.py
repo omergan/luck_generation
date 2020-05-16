@@ -47,10 +47,11 @@ class LuckGenerator:
             followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
             for follower_of_follower in followers_of_followers:
                 self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set, True)
-
         self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
-
+        print(self.luck)
+        tie_strength_tool.apply_topology(user, self.luck)
+        print(self.luck)
         self.draw_table(self.luck)
         return 0
 

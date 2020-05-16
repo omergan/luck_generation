@@ -49,29 +49,16 @@ if __name__ == '__main__':
     # users.append(User("cakiralp1"))  # 800589492
     # users.append(User("PennanenMaria"))  # 1587925376
     # users.append(User("accelerator_ffm"))  # 4186469475
-    users.append(User("LukeMorton"))  # 1587925376
-    users.append(User("scimon"))  # 4186469475
-
-    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
-    tsmtool.create_network(directed=True)
-    tsmtool.network.draw()
-    # user_neighbours = tsmtool.network.get_neighbours(user.id)
-    # tsmtool.network.get_shortest_path(66094718, 125991668)
-    # tsmtool.network.count_common_neighbours()
-    # tsmtool.network.count_shortest_path()
-
-    # tsmtool.measure_topology(users[1], users[2])
-    # tsmtool.measure_topology(users[3], users[4])
-    # tsmtool.measure_topology(users[1], users[0])
+    # users.append(User("LukeMorton"))  # 1587925376
+    # users.append(User("scimon"))  # 4186469475
+    #
+    # tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
+    # tsmtool.create_network(directed=True)
+    # tsmtool.network.draw()
 
 
-    # count_followers(graph)
-    # map_connections(graph)
-    # networkx_things()
-
-    # logger.debug("Starting main program!\n")
-    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    # # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
+    logger.debug("Starting main program!\n")
+    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
     # luck_generator.scrap("DevProtege")
-    # # luck_generator.draw_mosaic(None)
-    # logger.debug("\nEnding main program!")
+    logger.debug("\nEnding main program!")

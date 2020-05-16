@@ -16,6 +16,7 @@ class TieStrengthTool:
         self.limit = limit
         self.customer_data = self.load_user_data(username)
         self.network = None
+        self.create_network()
 
     def load_user_data(self, user):
         if self.online:
@@ -77,9 +78,23 @@ class TieStrengthTool:
         # Common neighbours
         # common_neighbours = self.network.get_common_neighbours(candidate.id, target.id)
         # logger.tie(f'Common neighbours: {[str(x) for x in common_neighbours]}')
+
         # Shortest path
         shortest_path = self.network.get_shortest_path(candidate.id, target.id)
-        logger.tie(f'Shorter path: {[str(x) for x in shortest_path]}')
+        logger.tie(f'Shortest path: {[str(x) for x in shortest_path]}')
+        return len(shortest_path)
+
+    def apply_topology(self, user, luck_list):
+        user_obj = User(user)
+        topology_factors = []
+        for follower in luck_list:
+            follower_obj = User(follower['follower'])
+            factor = self.measure_topology(user_obj, follower_obj)
+            topology_factors.append(factor)
+            follower['topology'] = factor
+        average = sum(topology_factors) / len(luck_list)
+        for follower in luck_list:
+            follower['luck'] *= abs(self.measure_topology(user_obj, follower_obj) - average)
 
 
 """
