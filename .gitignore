@@ -99,3 +99,5 @@ fabric.properties
 /measuring_luck_generation/.idea/
 luck_generation_data_frame.xlsx
 *.xlsx
+/measuring_luck_generation/.idea/
+*.iml

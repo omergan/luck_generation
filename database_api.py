@@ -95,6 +95,16 @@ def get_profile(username):
     conn.close()
     return profile
 
+def get_profile_by_id(user_id):
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    t = (user_id, )
+    profile = None
+    for row in cursor.execute('SELECT * FROM users WHERE id = ?', t):
+        profile = row
+    conn.close()
+    return profile
+
 def get_all_tweets_by_context(context):
     conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
@@ -185,3 +195,14 @@ def get_user_tweets_by_context(user_id, keyword):
 
     conn.close()
     return user_tweets_by_context
+
+def get_all_connections():
+    conn = sqlite3.connect(TWITTER_DATABASE)
+    cursor = conn.cursor()
+    following = []
+    for row in cursor.execute('SELECT * FROM following',):
+        following.append((row[0], row[1]))
+    for row in cursor.execute('SELECT * FROM followers', ):
+            following.append((row[0], row[1]))
+    conn.close()
+    return following

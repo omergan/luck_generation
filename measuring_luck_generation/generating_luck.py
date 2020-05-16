@@ -4,6 +4,7 @@ from enums import Strength
 from measuring_tie_strength import measure_tie_strength as tsm
 from measuring_luck_generation import datamuse_api
 import math
+import matplotlib.pyplot as plt
 from utils import Logger
 import pandas as pd
 
@@ -45,16 +46,12 @@ class LuckGenerator:
             followers_of_followers = self.get_candidates(strong_set, follower_full_profile)
             for follower_of_follower in followers_of_followers:
                 self.luck_calculation(tie_strength_tool, user, follower_of_follower['username'], strong_set, True)
-
         self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
-
-        self.export_to_excel(self.luck)
-        # self.draw_histogram(self.luck, 'relevance', 'occurrence', 'Relevance Histogram')
-        # self.draw_histogram(self.luck, 'surprise', 'occurrence', 'Surprise Histogram')
-        # self.draw_graph(self.luck,  'relevance', 'surprise', 'Surprise X Relevance Graph')
-        # self.draw_graph(self.luck, 'surprise', 'luck', 'Surprise X Luck Graph')
-        # self.draw_mosaic(self.luck)
+        print(self.luck)
+        tie_strength_tool.apply_topology(user, self.luck)
+        print(self.luck)
+        self.draw_table(self.luck)
         return 0
 
     def luck_calculation(self, TSM, user, follower, keywords, follower_of_follower):
@@ -154,6 +151,7 @@ class LuckGenerator:
             except Exception:
                 print(Exception)
 
-    def export_to_excel(self, data):
+    def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
         df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
+
