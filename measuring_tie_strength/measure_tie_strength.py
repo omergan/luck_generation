@@ -38,6 +38,9 @@ class TieStrengthTool:
             if keyword in candidate_relevance and keyword in customer_relevance:
                 relevance += candidate_relevance[keyword] + customer_relevance[keyword]
 
+        # Communication relevance
+        # Topology relevance
+        # Likeness relevance
         return relevance
 
     def measure_surprise(self, customer_data, candidate_data, keywords):
@@ -51,6 +54,9 @@ class TieStrengthTool:
             elif keyword not in candidate_relevance and keyword in customer_relevance:
                 surprise += customer_relevance[keyword]
 
+        # Communication surprise
+        # Topology surprise
+        # Likeness surprise
         return surprise
 
     def measure_tie_strength(self, user, candidate, keywords):
@@ -104,7 +110,6 @@ class TieStrengthTool:
 
         user_favorites = []
         candidate_favorites = []
-        # Common * Non common / total
         # How many common likes user and candidate have
         user_favorites += database_api.get_favorites(user_profile[0])
         candidate_favorites += database_api.get_favorites(candidate_profile[0])
