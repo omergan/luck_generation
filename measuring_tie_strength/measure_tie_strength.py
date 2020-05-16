@@ -91,16 +91,15 @@ class TieStrengthTool:
         return len(shortest_path)
 
     def apply_topology(self, user, luck_list):
-        user_obj = User(user)
         topology_factors = []
         for follower in luck_list:
             follower_obj = User(follower['follower'])
-            factor = self.measure_topology(user_obj, follower_obj)
+            factor = self.measure_topology(user, follower_obj)
             topology_factors.append(factor)
             follower['topology'] = factor
         average = sum(topology_factors) / len(luck_list)
         for follower in luck_list:
-            follower['luck'] *= abs(self.measure_topology(user_obj, follower_obj) - average)
+            follower['luck'] *= abs(self.measure_topology(user, follower_obj) - average)
 
 
 """
