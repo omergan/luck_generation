@@ -101,3 +101,4 @@ luck_generation_data_frame.xlsx
 *.xlsx
 /measuring_luck_generation/.idea/
 *.iml
+*.xml
