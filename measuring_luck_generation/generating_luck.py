@@ -33,7 +33,7 @@ class LuckGenerator:
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
         self.tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=customer.username)
 
-        for i, v in enumerate(self.get_candidates(customer, depth=12)):
+        for i, v in enumerate(list(self.get_candidates(customer, depth=12))[:10]):
             target: User = self.tie_strength_tool.network.user_dict[v]
             logger.luck(f'[{i}] Calculating luck for {customer.username}: {target.username}')
             self.luck_calculation(customer, target, strong_set, True)
@@ -68,7 +68,7 @@ class LuckGenerator:
         luck = relevance + surprise
 
         logger.luck(f'Tie strength between {u.username} -> {v.username} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
-        self.luck.append({'follower': u, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance']})
+        self.luck.append({'follower': v, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, customer, reverse=False, depth=12):
