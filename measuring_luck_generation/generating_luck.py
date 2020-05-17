@@ -33,14 +33,14 @@ class LuckGenerator:
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
         self.tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=customer.username)
 
-        for i, v in enumerate(self.get_candidates(customer, depth=12)):
+        for i, v in enumerate(self.get_candidates(customer, depth=1)):
             target: User = self.tie_strength_tool.network.user_dict[v]
             logger.luck(f'[{i}] Calculating luck for {customer.username}: {target.username}')
             self.luck_calculation(customer, target, strong_set, True)
 
         self.luck.sort(key=lambda x: x['surprise'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
-        self.tie_strength_tool.apply_topology(user, self.luck)
+        self.tie_strength_tool.apply_topology(customer, self.luck)
         self.draw_table(self.luck)
         return 0
 

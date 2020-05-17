@@ -93,7 +93,7 @@ class TieStrengthTool:
     def apply_topology(self, user, luck_list):
         topology_factors = []
         for follower in luck_list:
-            follower_obj = User(follower['follower'])
+            follower_obj = User(follower['follower'].username)
             factor = self.measure_topology(user, follower_obj)
             topology_factors.append(factor)
             follower['topology'] = factor
