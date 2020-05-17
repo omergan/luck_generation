@@ -100,7 +100,7 @@ class TieStrengthTool:
             follower['topology'] = factor
         average = sum(topology_factors) / len(luck_list)
         for follower in luck_list:
-            follower['luck'] *= abs(self.measure_topology(user_obj, follower_obj) - average)
+            follower['luck'] *= abs(self.measure_topology(user_obj, follower['follower']) - average)
 
 
 """
