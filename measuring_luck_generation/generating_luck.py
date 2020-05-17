@@ -68,7 +68,7 @@ class LuckGenerator:
         luck = relevance + surprise
 
         logger.luck(f'Tie strength between {u.username} -> {v.username} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
-        self.luck.append({'follower': u, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance']})
+        self.luck.append({'follower': v, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance']})
         return luck
 
     def get_candidates(self, customer, reverse=False, depth=12):
