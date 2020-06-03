@@ -43,8 +43,8 @@ def count_followers(graph):
 
 
 if __name__ == '__main__':
-    # users = []
-    # users.append(User("Charliedysonrec")) # 800589492
+    users = []
+    users.append(User("Charliedysonrec")) # 800589492
     # users.append(User("uriadoni"))  # 167900828
     # users.append(User("cakiralp1"))  # 800589492
     # users.append(User("PennanenMaria"))  # 1587925376
@@ -52,12 +52,13 @@ if __name__ == '__main__':
     # users.append(User("LukeMorton"))  # 1587925376
     # users.append(User("scimon"))  # 4186469475
     #
-    # tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
-    # tsmtool.create_network(directed=True)
-    # tsmtool.network.draw()
+    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
+    tsmtool.create_network(directed=False)
+    tsmtool.network.draw()
 
     logger.debug("Starting main program!\n")
-    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
+    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    # luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
+    # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
     # luck_generator.scrap("DevProtege")
     logger.debug("\nEnding main program!")

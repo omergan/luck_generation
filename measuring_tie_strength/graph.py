@@ -24,7 +24,7 @@ class Network(object):
         return connections
 
     def draw(self):
-        nx.draw(self.graph, with_labels=True)
+        nx.draw(self.graph, with_labels=True, font_size=6)
         plt.show()
 
     def get_neighbours(self, n):
