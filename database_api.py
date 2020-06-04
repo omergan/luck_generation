@@ -200,9 +200,18 @@ def get_all_connections():
     conn = sqlite3.connect(TWITTER_DATABASE)
     cursor = conn.cursor()
     following = []
-    for row in cursor.execute('SELECT * FROM following',):
+
+    sql = 'SELECT * FROM following WHERE FOLLOWING_ID IN("{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743)
+    for row in cursor.execute(sql):
         following.append((row[0], row[1]))
-    for row in cursor.execute('SELECT * FROM followers', ):
-            following.append((row[0], row[1]))
+
+    sql = 'SELECT * FROM followers WHERE ID IN("{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743)
+    for row in cursor.execute(sql):
+        following.append((row[0], row[1]))
+
+    # for row in cursor.execute('SELECT * FROM following',):
+    #     following.append((row[0], row[1]))
+    # for row in cursor.execute('SELECT * FROM followers',):
+    #     following.append((row[0], row[1]))
     conn.close()
     return following

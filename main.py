@@ -54,11 +54,21 @@ if __name__ == '__main__':
     #
     tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
     tsmtool.create_network(directed=False)
-    tsmtool.network.draw()
+    # tsmtool.network.draw()
 
     logger.debug("Starting main program!\n")
-    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    # luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
+    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
+
+    luck = luck_generator.luck
+    color_map = []
+    for node in tsmtool.network.graph:
+        if node < 10:
+            color_map.append('blue')
+        else:
+            color_map.append('green')
+
+
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
     # luck_generator.scrap("DevProtege")
     logger.debug("\nEnding main program!")

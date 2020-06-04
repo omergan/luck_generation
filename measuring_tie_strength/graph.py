@@ -17,14 +17,16 @@ class Network(object):
     def load_connections(self):
         connections = db.get_all_connections()
         user_connections = {}
-        for x,y in connections:
+        user_labels = []
+        for x, y in connections:
             user_connections[x] = User(x, True)
             user_connections[y] = User(y, True)
+            user_labels.append([user_connections[x].username, user_connections[y].username])
         self.user_dict = user_connections
-        return connections
+        return user_labels
 
-    def draw(self):
-        nx.draw(self.graph, with_labels=True, font_size=6)
+    def draw(self, color_map):
+        nx.draw(self.graph, node_color=color_map, with_labels=True, font_size=6)
         plt.show()
 
     def get_neighbours(self, n):
