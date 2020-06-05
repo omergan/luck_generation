@@ -23,7 +23,8 @@ class Network(object):
             user_connections[y] = User(y, True)
             user_labels.append([user_connections[x].username, user_connections[y].username])
         self.user_dict = user_connections
-        return user_labels
+        # return user_labels
+        return connections
 
     def draw(self, color_map):
         nx.draw(self.graph, node_color=color_map, with_labels=True, font_size=6)

@@ -52,21 +52,32 @@ if __name__ == '__main__':
     # users.append(User("LukeMorton"))  # 1587925376
     # users.append(User("scimon"))  # 4186469475
     #
-    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=users[0].username)
-    tsmtool.create_network(directed=False)
-    # tsmtool.network.draw()
+    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username="MizrahiMichael")
+    # tsmtool.create_network(directed=False)
 
     logger.debug("Starting main program!\n")
     luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    luck_generator.generating_luck("MizrahiMichael", "Looking for a software engineering job")
+    username = "MizrahiMichael"
+    luck_generator.generating_luck(username, "Looking for a software engineering job")
 
     luck = luck_generator.luck
     color_map = []
     for node in tsmtool.network.graph:
-        if node < 10:
-            color_map.append('blue')
+        luck_value=0
+        for x in luck:
+            if x['follower'].id == node:
+                luck_value = x['luck']
+        if node == 2993950570: #michael's id
+            color_map.append('#00FF00')
+        elif luck_value > 3.33:
+            color_map.append('#FF5733')
+        elif 3.33 >= luck_value > 2.5:
+            color_map.append('#F6FF33')
+        elif 2.5 >= luck_value > 2:
+            color_map.append('#90FF33')
         else:
-            color_map.append('green')
+            color_map.append('#3390FF')
+    tsmtool.network.draw(color_map)
 
 
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")

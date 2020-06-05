@@ -201,17 +201,40 @@ def get_all_connections():
     cursor = conn.cursor()
     following = []
 
-    sql = 'SELECT * FROM following WHERE FOLLOWING_ID IN("{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743)
+    # sql = 'SELECT * FROM following WHERE FOLLOWING_ID IN("{}")'.format(2993950570)
+    # for row in cursor.execute(sql):
+    #     following.append((row[0], row[1]))
+    #
+    # sql = 'SELECT * FROM followers WHERE ID IN("{}")'.format(2993950570)
+    # for row in cursor.execute(sql):
+    #     following.append((row[0], row[1]))
+
+    sql = 'SELECT * FROM following WHERE FOLLOWING_ID IN("{}","{}","{}","{}","{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743, 167900828, 19070247, 1218504114340093957, 11174462)
     for row in cursor.execute(sql):
         following.append((row[0], row[1]))
 
-    sql = 'SELECT * FROM followers WHERE ID IN("{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743)
+    sql = 'SELECT * FROM followers WHERE ID IN("{}","{}","{}","{}","{}","{}","{}","{}","{}")'.format(800589492, 1587925376, 2993950570, 4186469475, 66743, 167900828, 19070247, 1218504114340093957, 11174462)
     for row in cursor.execute(sql):
         following.append((row[0], row[1]))
 
+    following_total = [] + following
+    for x in range(3):
+        print(x)
+        for customer, follower in following:
+            sql = 'SELECT * FROM followers WHERE ID IN("{}")'.format(follower)
+            for row in cursor.execute(sql):
+                following_total.append((row[0], row[1]))
+
+            sql = 'SELECT * FROM following WHERE FOLLOWING_ID IN("{}")'.format(follower)
+            for row in cursor.execute(sql):
+                following_total.append((row[0], row[1]))
+
+
+
+    # TODO : ALL DB
     # for row in cursor.execute('SELECT * FROM following',):
     #     following.append((row[0], row[1]))
     # for row in cursor.execute('SELECT * FROM followers',):
     #     following.append((row[0], row[1]))
     conn.close()
-    return following
+    return following_total

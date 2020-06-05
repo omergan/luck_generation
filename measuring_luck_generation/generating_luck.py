@@ -38,7 +38,7 @@ class LuckGenerator:
             logger.luck(f'[{i}] Calculating luck for {customer.username}: {target.username}')
             self.luck_calculation(customer, target, strong_set, True)
 
-        self.luck.sort(key=lambda x: x['surprise'], reverse=True)
+        self.luck.sort(key=lambda x: x['luck'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
         # self.tie_strength_tool.apply_topology(customer, self.luck)
         self.draw_table(self.luck)
