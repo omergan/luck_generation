@@ -66,18 +66,15 @@ class LuckGenerator:
         relevance = math.exp(R)
 
         topology = self.tie_strength_tool.measure_topology(u, v)
-        # factored_relevance = relevance + topology
-        # factored_surprise = surprise + topology
+
         factored_relevance = math.exp(-1 * (R - surprise - topology))
         factored_surprise = math.exp(R + topology)
 
         luck = relevance + surprise
         factored_luck = factored_relevance + factored_surprise
 
-        count_user_neighbours = len(self.tie_strength_tool.network.get_neighbours(u.id))
-        count_follower_neighbours = len(self.tie_strength_tool.network.get_neighbours(v.id))
         logger.luck(f'Tie strength between {u.username} -> {v.username} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
-        self.luck.append({'follower': v, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance'], 'factored_surprise': factored_surprise, 'factored_relevance': factored_relevance, 'factored_luck': factored_luck, 'topology': topology, 'user_neighbours' : count_user_neighbours, 'follower_neighbours': count_follower_neighbours, 'mult': topology * count_follower_neighbours})
+        self.luck.append({'follower': v, 'follower_id': v.id, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance'], 'factored_surprise': factored_surprise, 'factored_relevance': factored_relevance, 'factored_luck': factored_luck, 'topology': topology})
         return luck
 
     def get_candidates(self, customer, reverse=False, depth=12):

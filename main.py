@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from measuring_tie_strength.models import User, Tweet
 from measuring_tie_strength import measure_tie_strength as tsm
+import pandas as pd
 LIMIT = 1
 
 from utils import Logger
@@ -51,22 +52,24 @@ if __name__ == '__main__':
     # users.append(User("accelerator_ffm"))  # 4186469475
     # users.append(User("LukeMorton"))  # 1587925376
     # users.append(User("scimon"))  # 4186469475
-    #
+
     tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username="MizrahiMichael")
-    # tsmtool.create_network(directed=False)
 
     logger.debug("Starting main program!\n")
-    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
     username = "MizrahiMichael"
-    luck_generator.generating_luck(username, "Looking for a software engineering job")
+    # luck_generator.generating_luck(username, "Looking for a software engineering job")
 
-    luck = luck_generator.luck
+    df = pd.read_excel('luck_generation_data_frame.xlsx')
+    luck = list(df.T.to_dict().values())
+    print(luck)
+    # luck = luck_generator.luck
     color_map = []
     for node in tsmtool.network.graph:
         luck_value=0
         for x in luck:
-            if x['follower'].id == node:
-                luck_value = x['luck']
+            if x['follower_id'] == node:
+                luck_value = ['luck']
         if node == 2993950570: #michael's id
             color_map.append('#00FF00')
         elif luck_value > 3.33:
