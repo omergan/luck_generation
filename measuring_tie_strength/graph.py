@@ -26,8 +26,8 @@ class Network(object):
         # return user_labels
         return connections
 
-    def draw(self, color_map):
-        nx.draw(self.graph, node_color=color_map, with_labels=True, font_size=6)
+    def draw(self, node_list, color_map, shape_map):
+        nx.draw(self.graph, nodelist=node_list, node_color=color_map, shape_map=shape_map, with_labels=True, font_size=6)
         plt.show()
 
     def get_neighbours(self, n):

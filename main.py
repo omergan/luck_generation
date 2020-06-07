@@ -12,6 +12,7 @@ import pandas as pd
 LIMIT = 1
 
 from utils import Logger
+from graph_utils import *
 logger = Logger()
 
 
@@ -46,6 +47,7 @@ def count_followers(graph):
 if __name__ == '__main__':
     users = []
     users.append(User("Charliedysonrec")) # 800589492
+    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username="Charliedysonrec")
     # users.append(User("uriadoni"))  # 167900828
     # users.append(User("cakiralp1"))  # 800589492
     # users.append(User("PennanenMaria"))  # 1587925376
@@ -53,34 +55,23 @@ if __name__ == '__main__':
     # users.append(User("LukeMorton"))  # 1587925376
     # users.append(User("scimon"))  # 4186469475
 
-    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username="MizrahiMichael")
+    # 2993950570:  # michael's id
 
     logger.debug("Starting main program!\n")
     # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    username = "MizrahiMichael"
+    # username = "Charliedysonrec"
     # luck_generator.generating_luck(username, "Looking for a software engineering job")
-
-    df = pd.read_excel('luck_generation_data_frame.xlsx')
-    luck = list(df.T.to_dict().values())
-    print(luck)
     # luck = luck_generator.luck
-    color_map = []
-    for node in tsmtool.network.graph:
-        luck_value=0
-        for x in luck:
-            if x['follower_id'] == node:
-                luck_value = ['luck']
-        if node == 2993950570: #michael's id
-            color_map.append('#00FF00')
-        elif luck_value > 3.33:
-            color_map.append('#FF5733')
-        elif 3.33 >= luck_value > 2.5:
-            color_map.append('#F6FF33')
-        elif 2.5 >= luck_value > 2:
-            color_map.append('#90FF33')
-        else:
-            color_map.append('#3390FF')
-    tsmtool.network.draw(color_map)
+
+    df = pd.read_excel('full - Charliedysonrec.xlsx')
+    luck = list(df.T.to_dict().values())
+
+    orig_list = tsmtool.network.graph
+    nodelist = list(orig_list)[:30]
+    import pdb; pdb.set_trace()
+    shape_map = map_shapes(luck, orig_list)
+    color_map = map_colors(luck, orig_list, 800589492)
+    tsmtool.network.draw(list(orig_list), color_map, shape_map)
 
 
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
