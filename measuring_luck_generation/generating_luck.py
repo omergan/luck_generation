@@ -59,6 +59,7 @@ class LuckGenerator:
             throw = True
 
         topology = self.tie_strength_tool.measure_topology(u, v)
+        luck = 0
         if not throw:
             relevance = relevance / NormF
             surprise = surprise / NormF

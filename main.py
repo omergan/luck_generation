@@ -49,7 +49,7 @@ if __name__ == '__main__':
     users.append(User("MizrahiMichael"))  # 2993950570
     users.append(User("LukeMorton"))
     user = users[0]
-    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=user.username)
+    # tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=user.username)
 
 
     # logger.debug("Starting main program!\n")
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
 
     luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    username = "Charliedysonrec"
+    username = "MizrahiMichael"
     luck_generator.generating_luck(username, "Looking for a software engineering job")
     luck = luck_generator.luck
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
