@@ -1,9 +1,9 @@
-def map_colors(luck, nodelist, center_id):
+def map_colors(luck, nodelist, center_id, user_dict):
     color_map = []
     for node in nodelist:
         luck_value = 0
         for x in luck:
-            if x['follower_id'] == node:
+            if x['username'] == user_dict[node].username:
                 luck_value = x['luck']
 
         # Set Color
@@ -20,15 +20,25 @@ def map_colors(luck, nodelist, center_id):
             color_map.append('#3390FF')
     return color_map
 
-def get_topology(luck, user):
+def map_size(luck, nodelist, center_id, user_dict):
+    size_map = []
+    for node in nodelist:
+        size = 25
+        for x in luck:
+            if x['username'] == user_dict[node].username and x['luck'] > 0:
+                size = 150
+        size_map.append(size)
+    return size_map
+
+def get_topology(luck, username):
     for x in luck:
-        if x['follower_id'] == user:
+        if x['username'] == username:
             return x['topology']
     return 0 # Change this to 0 to display disconnected nodes (999)
 
-def get_luck_value(luck, user):
+def get_luck_value(luck, username):
     for x in luck:
-        if x['follower_id'] == user:
+        if x['username'] == username:
             return x['luck']
     return 0
 
@@ -37,8 +47,8 @@ def get_luck_threshold(n, luck):
         return 0
     return luck[n-1].get('luck')
 
-def filter_topology(luck, orig_list, user, topology):
-    return [node for node in orig_list if get_topology(luck, node) <= topology or node == user.id]
+def filter_topology(luck, orig_list, user, topology, user_dict):
+    return [node for node in orig_list if get_topology(luck, user_dict[node].username) <= topology or node == user.id]
 
-def filter_luck(luck, orig_list, user, luck_value):
-    return [node for node in orig_list if get_luck_value(luck, node) >= luck_value or node == user.id]
+def filter_luck(luck, orig_list, user, luck_value, user_dict):
+    return [node for node in orig_list if get_luck_value(luck, user_dict[node].username) >= luck_value or node == user.id]
