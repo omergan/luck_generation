@@ -52,26 +52,27 @@ if __name__ == '__main__':
     # tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=user.username)
 
 
-    # logger.debug("Starting main program!\n")
-    # df = pd.read_excel('full - Charliedysonrec.xlsx')
-    # luck = list(df.T.to_dict().values())
-    #
-    # orig_list = tsmtool.network.graph
-    # import pdb; pdb.set_trace()
-    # len(orig_list)
-    # filter = filter_topology(luck, orig_list, user, 5)
-    # # filter = filter_luck(luck, orig_list, user, 3.3)
-    # tsmtool.network.create_subgraph(filter)
-    # color_map = map_colors(luck, filter, user.id)
-    # tsmtool.network.draw(list(filter), color_map)
-    #
-    # logger.debug("\nEnding main program!")
+    logger.debug("Starting main program!\n")
+    df = pd.read_excel('new - Charliedysonrec.xlsx')
+    luck = list(df.T.to_dict().values())
+    user_dict = tsmtool.network.user_dict
+
+    orig_list = tsmtool.network.graph
+    len(orig_list)
+    filter = filter_topology(luck, orig_list, user, 5, user_dict)
+    # filter = filter_luck(luck, orig_list, user, 3.3, user_dict)
+    tsmtool.network.create_subgraph(filter)
+    color_map = map_colors(luck, filter, user.id, user_dict)
+    size_map = map_size(luck, filter, user.id, user_dict)
+    tsmtool.network.draw(list(filter), color_map, size_map)
+
+    logger.debug("\nEnding main program!")
 
 
 
-    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    username = "MizrahiMichael"
-    luck_generator.generating_luck(username, "Looking for a software engineering job")
-    luck = luck_generator.luck
+    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    # username = "Charliedysonrec"
+    # luck_generator.generating_luck(username, "Looking for a software engineering job")
+    # luck = luck_generator.luck
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
     # luck_generator.scrap("DevProtege")
