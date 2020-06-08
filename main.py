@@ -43,37 +43,35 @@ def count_followers(graph):
     for key in graph:
         print(f'{key} : {len(graph[key])}')
 
-
 if __name__ == '__main__':
     users = []
-    users.append(User("Charliedysonrec")) # 800589492
-    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username="Charliedysonrec")
-    # users.append(User("uriadoni"))  # 167900828
-    # users.append(User("cakiralp1"))  # 800589492
-    # users.append(User("PennanenMaria"))  # 1587925376
-    # users.append(User("accelerator_ffm"))  # 4186469475
-    # users.append(User("LukeMorton"))  # 1587925376
-    # users.append(User("scimon"))  # 4186469475
-
-    # 2993950570:  # michael's id
-
-    logger.debug("Starting main program!\n")
-    # luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
-    # username = "Charliedysonrec"
-    # luck_generator.generating_luck(username, "Looking for a software engineering job")
-    # luck = luck_generator.luck
-
-    df = pd.read_excel('full - Charliedysonrec.xlsx')
-    luck = list(df.T.to_dict().values())
-
-    orig_list = tsmtool.network.graph
-    nodelist = list(orig_list)[:30]
-    import pdb; pdb.set_trace()
-    shape_map = map_shapes(luck, orig_list)
-    color_map = map_colors(luck, orig_list, 800589492)
-    tsmtool.network.draw(list(orig_list), color_map, shape_map)
+    users.append(User("Charliedysonrec"))  # 800589492
+    users.append(User("MizrahiMichael"))  # 2993950570
+    users.append(User("LukeMorton"))
+    user = users[0]
+    tsmtool = tsm.TieStrengthTool(is_online=False, limit=20, username=user.username)
 
 
+    # logger.debug("Starting main program!\n")
+    # df = pd.read_excel('full - Charliedysonrec.xlsx')
+    # luck = list(df.T.to_dict().values())
+    #
+    # orig_list = tsmtool.network.graph
+    # import pdb; pdb.set_trace()
+    # len(orig_list)
+    # filter = filter_topology(luck, orig_list, user, 5)
+    # # filter = filter_luck(luck, orig_list, user, 3.3)
+    # tsmtool.network.create_subgraph(filter)
+    # color_map = map_colors(luck, filter, user.id)
+    # tsmtool.network.draw(list(filter), color_map)
+    #
+    # logger.debug("\nEnding main program!")
+
+
+
+    luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
+    username = "Charliedysonrec"
+    luck_generator.generating_luck(username, "Looking for a software engineering job")
+    luck = luck_generator.luck
     # luck_generator.generating_luck("Charliedysonrec", "Looking for a software engineering job")
     # luck_generator.scrap("DevProtege")
-    logger.debug("\nEnding main program!")
