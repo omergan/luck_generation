@@ -68,8 +68,6 @@ if __name__ == '__main__':
     #
     # logger.debug("\nEnding main program!")
 
-
-
     luck_generator = LG.LuckGenerator(is_online=False, limit=LIMIT)
     username = "LukeMorton"
     luck_generator.generating_luck(username, "Looking for a software engineering job")
