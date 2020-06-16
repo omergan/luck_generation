@@ -1,5 +1,5 @@
 import twint_api
-from measuring_tie_strength import measure_tie_strength as tsm
+from measuring_tie_strength.measure_tie_strength import TieStrengthTool
 from measuring_tie_strength.models import User
 import networkx as nx
 import math
@@ -22,7 +22,7 @@ class LuckGenerator:
         self.luck = []
         self.tie_strength_tool = None
 
-    def generating_luck(self, user, context):
+    def generating_luck(self, user, context, tsm: TieStrengthTool):
         logger.luck(f'Generating Luck for a given user : {user} in context of : {context}')
 
         if self.online:
@@ -31,7 +31,7 @@ class LuckGenerator:
         customer = User(user)
         strong_set = self.strict_set
         logger.luck(f'Strong keywords length {len(strong_set)}, Strong keywords: {strong_set}')
-        self.tie_strength_tool = tsm.TieStrengthTool(is_online=self.online, limit=self.limit, username=customer.username)
+        self.tie_strength_tool = tsm
 
         for i, v in enumerate(self.get_candidates(customer, depth=12)):
             target: User = self.tie_strength_tool.network.user_dict[v]
@@ -40,45 +40,56 @@ class LuckGenerator:
 
         self.luck.sort(key=lambda x: x['luck'], reverse=True)
         logger.luck(f'Weak ties scores : {self.luck}')
-        # self.tie_strength_tool.apply_topology(customer, self.luck)
         self.draw_table(self.luck)
         return 0
 
     def luck_calculation(self, u: User, v: User, keywords, follower_of_follower):
-        relevance, surprise, follower_data = self.tie_strength_tool.measure_tie_strength(u.username, v.username, keywords)
-
+        relevance, surprise, follower_data = self.tie_strength_tool.measure_tie_strength(u.username, v.username,
+                                                                                         keywords)
         throw = False
         # Drop followers with 0 relevance for the context
         if sum(follower_data['relevance'].values()) == 0 or relevance == 0:
             throw = True
 
-        NormF = sum(follower_data['relevance'].values()) + sum(self.tie_strength_tool.customer_data['relevance'].values())
+        normal = sum(follower_data['relevance'].values()) + sum(self.tie_strength_tool.customer_data['relevance'].values())
 
         # Drop followers that too relevance to the context
-        if NormF == relevance:
+        if normal == relevance:
             throw = True
 
         topology = self.tie_strength_tool.measure_topology(u, v)
         luck = 0
         if not throw:
-            relevance = relevance / NormF
-            surprise = surprise / NormF
+            relevance = relevance / normal
+            surprise = surprise / normal
 
-            R = relevance
+            orig_relevance = relevance
 
-            surprise = math.exp(-1 * (R - surprise))
-            relevance = math.exp(R)
+            surprise = math.exp(-1 * (orig_relevance - surprise))
+            relevance = math.exp(orig_relevance)
 
-            factored_relevance = math.exp(-1 * (R - surprise - topology))
-            factored_surprise = math.exp(R + topology)
+            factored_relevance = math.exp(-1 * (orig_relevance - surprise - topology))
+            factored_surprise = math.exp(orig_relevance + topology)
 
             luck = relevance + surprise
             factored_luck = factored_relevance + factored_surprise
 
-            logger.luck(f'Tie strength between {u.username} -> {v.username} is done, Relevance is: {relevance}, Surprise is {surprise}, Luck is {luck}')
-            self.luck.append({'follower': v, 'follower_id': v.id, 'username': v.username, 'surprise': surprise, 'relevance': relevance, 'luck': luck, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance'], 'factored_surprise': factored_surprise, 'factored_relevance': factored_relevance, 'factored_luck': factored_luck, 'topology': topology})
+            logger.luck(f'Tie strength between {u.username} -> {v.username} is done, Relevance is: {relevance}, '
+                        f'Surprise is {surprise}, Luck is {luck}')
+
+            self.luck.append({'follower': v, 'follower_id': v.id, 'username': v.username, 'surprise': surprise,
+                              'relevance': relevance, 'luck': luck, 'NormF': normal, 'follower of follower':
+                                  follower_of_follower, 'customer relevance set':
+                                  self.tie_strength_tool.customer_data['relevance'],
+                              'follower set': follower_data['relevance'], 'factored_surprise': factored_surprise,
+                              'factored_relevance': factored_relevance, 'factored_luck': factored_luck,
+                              'topology': topology})
         else:
-            self.luck.append({'follower': v, 'follower_id': v.id, 'username': v.username, 'surprise': 0, 'relevance': 0, 'luck': 0, 'NormF': NormF, 'follower of follower': follower_of_follower, 'customer relevance set': self.tie_strength_tool.customer_data['relevance'], 'follower set': follower_data['relevance'], 'factored_surprise': 0, 'factored_relevance': 0, 'factored_luck': 0, 'topology': topology})
+            self.luck.append({'follower': v, 'follower_id': v.id, 'username': v.username, 'surprise': 0, 'relevance': 0,
+                              'luck': 0, 'NormF': normal, 'follower of follower': follower_of_follower,
+                              'customer relevance set': self.tie_strength_tool.customer_data['relevance'],
+                              'follower set': follower_data['relevance'], 'factored_surprise': 0,
+                              'factored_relevance': 0, 'factored_luck': 0, 'topology': topology})
 
         return luck
 

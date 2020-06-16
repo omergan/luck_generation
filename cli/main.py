@@ -1,9 +1,9 @@
 import click
 
-from cli.cli_options import CliOptions
-from cli.commands import Commands
-from cli.initializer import Initializer
-from cli.interface import Interface
+from cli.modules.cli_options import CliOptions
+from cli.modules.commands import Commands
+from cli.modules.initializer import Initializer
+from cli.modules.interface import Interface
 from utils import Logger
 
 logger = Logger()
@@ -13,15 +13,15 @@ logger = Logger()
 @click.option('--context', default='Looking for a software engineering job', help='Generate luck in this context')
 @click.option('--network', default='Twitter', help="Input social network for simulation")
 @click.option('--limit', default=10, help='Limit for web scraping')
-def main(username, context, network, limit):
-    logger.debug(f'Cli start with params: username: {username}, context: {context}, network: {network}, '
-                 f'limit:{limit}')
-    options = CliOptions(username, context, network, limit)
+@click.option('--online', default=False, help='Run simulation online/local')
+def cli(username, context, network, limit, online):
+    click.echo(f'Cli start with params: username: {username}, context: {context}, network: {network}, limit:{limit}')
+    options = CliOptions(username, context, network, limit, online)
     initializer = Initializer(options)
     commands = Commands(initializer)
     interface = Interface(commands)
-    click.echo('Done')
+    click.echo(f'Done')
 
 
 if __name__ == "__main__":
-    main()
+    cli()
