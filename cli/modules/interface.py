@@ -34,5 +34,20 @@ class Interface:
                 self.commands.run_build_full_graph(directed=directed)
                 continue
             if answers['instruction'] == 'Build sub graph':
-                print("Build sub graph")
+                answers = prompt(constants.build_sub_graph_options, style=constants.cli_style)
+                self.handle_sub_graph_routine(answers['options'])
                 continue
+
+    def handle_sub_graph_routine(self, answer):
+        if answer == 'Back':
+            return
+        if answer == 'Filter by topology':
+            topology = input("Type topology threshold : ")
+            while not topology.isnumeric():
+                topology = input("Type topology threshold : ")
+            self.commands.run_build_sub_graph_by_topology(topology)
+            return
+        if answer == 'Filter by luck':
+            return
+        if answer == 'Filter by relevance and surprise':
+            return

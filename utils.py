@@ -1,3 +1,4 @@
+from clint.textui import puts, colored, indent
 
 class Logger:
     def __init__(self):
@@ -9,16 +10,16 @@ class Logger:
 
     def critical(self, msg):
         if not self.disabled and not self.critical_disabled:
-            print("\033[91m {}\033[00m".format(msg))
+            print(colored.red("{}".format(msg)))
 
     def debug(self, msg):
         if not self.disabled and not self.debug_disabled:
-            print("\033[93m {}\033[00m".format(msg))
+            print(colored.magenta("{}".format(msg)))
 
     def tie(self, msg):
         if not self.disabled and not self.tie_strength_disabled:
-            print("\033[34m TIE:{}\033[00m".format(msg))
+            print(colored.cyan("{}".format(msg)))
 
     def luck(self, msg):
         if not self.disabled and not self.generate_luck_disabled:
-            print("\033[35m LUCK:{}\033[00m".format(msg))
+            print(colored.green("{}".format(msg)))

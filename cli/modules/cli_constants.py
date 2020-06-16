@@ -33,3 +33,27 @@ cli_instructions = [
         'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True
     }
 ]
+
+build_sub_graph_options = [
+    {
+        'type': 'list',
+        'message': 'Sub graph options',
+        'name': 'options',
+        'choices': [
+            Separator('= Options menu ='),
+            {
+                'name': 'Filter by topology'
+            },
+            {
+                'name': 'Filter by luck'
+            },
+            {
+                'name': 'Filter by relevance and surprise'
+            },
+            {
+                'name': 'Back'
+            },
+        ],
+        'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True
+    }
+]
