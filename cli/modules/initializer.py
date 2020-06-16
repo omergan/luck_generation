@@ -10,5 +10,5 @@ class Initializer:
     def __init__(self, options: CliOptions):
         self.options = options
         self.LG = LuckGenerator(is_online=options.online, limit=options.limit)
-        # self.TSM = TieStrengthTool(is_online=options.online, limit=options.limit,
-        #                            username=options.username)
+        self.TSM = TieStrengthTool(is_online=options.online, limit=options.limit,
+                                   username=options.username)
