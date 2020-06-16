@@ -22,7 +22,7 @@ class LuckGenerator:
         self.luck = []
         self.tie_strength_tool = None
 
-    def generating_luck(self, user, context, tsm: TieStrengthTool):
+    def generating_luck(self, user, context, network, tsm: TieStrengthTool):
         logger.luck(f'Generating Luck for a given user : {user} in context of : {context}')
 
         if self.online:

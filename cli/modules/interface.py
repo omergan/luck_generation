@@ -1,8 +1,6 @@
 from __future__ import print_function, unicode_literals
 
 import click
-from prompt_toolkit.terminal.win32_output import NoConsoleScreenBufferError
-
 from cli.modules.commands import Commands
 from PyInquirer import prompt
 import cli.modules.cli_constants as constants
@@ -13,7 +11,7 @@ class Interface:
         try:
             self.commands = commands
             self.run()
-        except NoConsoleScreenBufferError:
+        except Exception:
             click.echo("No Windows console found. Are you running cmd.exe?")
 
     def run(self):
@@ -29,7 +27,11 @@ class Interface:
                 self.commands.run_generating_luck_simulation(online=online)
                 continue
             if answers['instruction'] == 'Build entire graph':
-                print("Build entire graph")
+                x = input("Directed? Y/N ")
+                while x != 'Y' and x != 'N':
+                    x = input("Directed? Y/N ")
+                directed = True if x == 'Y' else False
+                self.commands.run_build_full_graph(directed=directed)
                 continue
             if answers['instruction'] == 'Build sub graph':
                 print("Build sub graph")
