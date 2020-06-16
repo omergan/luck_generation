@@ -14,7 +14,7 @@ logger = Logger()
 @click.option('--network', default='Twitter', help="Input social network for simulation")
 @click.option('--limit', default=10, help='Limit for web scraping')
 def main(username, context, network, limit):
-    logger.debug(f'Cli start with params: username:{username} context:{context} network:{network} '
+    logger.debug(f'Cli start with params: username: {username}, context: {context}, network: {network}, '
                  f'limit:{limit}')
     options = CliOptions(username, context, network, limit)
     initializer = Initializer(options)

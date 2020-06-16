@@ -1,5 +1,4 @@
 from PyInquirer import style_from_dict, Token, prompt, Separator
-from pprint import pprint
 
 cli_style = style_from_dict({
     Token.Separator: '#cc5454',

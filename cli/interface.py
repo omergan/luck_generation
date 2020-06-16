@@ -17,4 +17,3 @@ class Interface:
             pprint(answers)
         except NoConsoleScreenBufferError:
             click.echo("No Windows console found. Are you running cmd.exe?")
-
