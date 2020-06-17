@@ -44,9 +44,9 @@ class Commands:
     def run_map_color_by_luck(self, threshold):
         self.initializer.TSM.network.mapping_type = "luck"
         self.initializer.TSM.network.threshold = threshold
-        logger.debug("Mapping type has been changed to luck with threshold {}".format(str(threshold)))
+        logger.debug("\nMapping type has been changed to luck with threshold {}\n".format(str(threshold)))
 
     def run_map_color_by_relevance_and_surprise(self, threshold):
         self.initializer.TSM.network.mapping_type = "relevance_and_surprise"
         self.initializer.TSM.network.threshold = threshold
-        logger.debug("Mapping type has been changed to relevance and surprise with threshold {}".format(str(threshold)))
+        logger.debug("\nMapping type has been changed to relevance and surprise with threshold {}\n".format(str(threshold)))

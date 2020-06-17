@@ -15,12 +15,12 @@ logger = Logger()
 @click.option('--limit', default=10, help='Limit for web scraping')
 @click.option('--online', default=False, help='Run simulation online/local')
 def cli(username, context, network, limit, online):
-    logger.debug(f'Cli start with params: username: {username}, context: {context}, network: {network}, limit:{limit}')
+    logger.debug(f'\nCli is initialized with the following params:\nUsername: {username}\nContext: {context}\nNetwork: {network}\nLimit:{limit}\n')
     options = CliOptions(username, context, network, limit, online)
     initializer = Initializer(options)
     commands = Commands(initializer)
     interface = Interface(commands)
-    logger.debug(f'Done')
+    logger.debug(f'\nDone')
 
 
 if __name__ == "__main__":

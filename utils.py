@@ -14,7 +14,7 @@ class Logger:
 
     def debug(self, msg):
         if not self.disabled and not self.debug_disabled:
-            print(colored.magenta("{}".format(msg)))
+            print(colored.cyan("{}".format(msg)))
 
     def tie(self, msg):
         if not self.disabled and not self.tie_strength_disabled:
