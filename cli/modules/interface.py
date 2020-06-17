@@ -1,9 +1,13 @@
 from __future__ import print_function, unicode_literals
-
+import traceback
+import sys
 import click
 from cli.modules.commands import Commands
 from PyInquirer import prompt
 import cli.modules.cli_constants as constants
+
+from utils import Logger
+logger = Logger()
 
 class Interface:
 
@@ -11,7 +15,8 @@ class Interface:
         try:
             self.commands = commands
             self.run()
-        except Exception:
+        except Exception as e:
+            traceback.print_exc(file=sys.stdout)
             click.echo("No Windows console found. Are you running cmd.exe?")
 
     def run(self):

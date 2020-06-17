@@ -1,6 +1,5 @@
 from cli.modules.initializer import Initializer
-from graph_utils import filter_topology
-
+from graph_utils import filter_topology, map_size, map_colors, map_labels
 
 class Commands:
     def __init__(self, initializer: Initializer):
@@ -21,7 +20,13 @@ class Commands:
                                    self.initializer.LG.user, int(topology),
                                    self.initializer.TSM.network.user_dict)
         tsm.network.create_subgraph(filtered)
-        tsm.network.draw()
+        size_map = map_size(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                            self.initializer.TSM.network.user_dict)
+        colors_map = map_colors(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict)
+        labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict)
+        tsm.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
 
     def run_build_full_graph(self, directed: bool):
         self.initializer.TSM.network.draw()

@@ -26,13 +26,13 @@ class Network(object):
         # return user_labels
         return connections
 
-    # def draw(self, node_list, color_map, size_map):
-    #     nx.draw(self.graph, nodelist=node_list, node_color=color_map, with_labels=True, font_size=6, node_size=size_map)
-    #     plt.show()
-
-    def draw(self):
-        nx.draw(self.graph, with_labels=True, font_size=6)
+    def draw(self, color_map, size_map, label_map):
+        nx.draw(self.graph, node_color=color_map, with_labels=True, font_size=6, node_size=size_map, labels=label_map)
         plt.show()
+
+    # def draw(self):
+    #     nx.draw(self.graph, with_labels=True, font_size=6)
+    #     plt.show()
 
     def create_subgraph(self, nodes):
         self.graph = self.graph.subgraph(nodes)

@@ -1,8 +1,9 @@
 def map_colors(luck, nodelist, center_id, user_dict):
+
     color_map = []
     count = 0
     th = int(0.05 * len(nodelist))
-    luck_threshold = get_luck_threshold(th, nodelist)
+    luck_threshold = get_luck_threshold(th, luck)
 
     for i, node in enumerate(nodelist):
         luck_value = 0
