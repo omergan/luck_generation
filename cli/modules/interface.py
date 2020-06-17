@@ -42,6 +42,10 @@ class Interface:
                 answers = prompt(constants.build_sub_graph_options, style=constants.cli_style)
                 self.handle_sub_graph_routine(answers['options'])
                 continue
+            if answers['instruction'] == 'Choose color mapping':
+                answers = prompt(constants.choose_color_mapping_options, style=constants.cli_style)
+                self.handle_color_mapping_routine(answers['options'])
+                continue
 
     def handle_sub_graph_routine(self, answer):
         if answer == 'Back':
@@ -55,4 +59,14 @@ class Interface:
         if answer == 'Filter by luck':
             return
         if answer == 'Filter by relevance and surprise':
+            return
+
+    def handle_color_mapping_routine(self, answer):
+        if answer == 'Back':
+            return
+        if answer == 'Map by luck':
+            self.commands.run_map_color_by_luck()
+            return
+        if answer == 'Map by relevance and surprise':
+            self.commands.run_map_color_by_relevance_and_surprise()
             return

@@ -27,6 +27,9 @@ cli_instructions = [
                 'name': 'Build sub graph'
             },
             {
+                'name': 'Choose color mapping'
+            },
+            {
                 'name': 'Exit'
             },
         ],
@@ -45,10 +48,31 @@ build_sub_graph_options = [
                 'name': 'Filter by topology'
             },
             {
-                'name': 'Filter by luck'
+                'name': 'Filter by luck - NOT IMPLMENETED'
             },
             {
-                'name': 'Filter by relevance and surprise'
+                'name': 'Filter by relevance and surprise - NOT IMPLMENETED'
+            },
+            {
+                'name': 'Back'
+            },
+        ],
+        'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True
+    }
+]
+
+choose_color_mapping_options = [
+    {
+        'type': 'list',
+        'message': 'Color mapping options',
+        'name': 'options',
+        'choices': [
+            Separator('= Options menu ='),
+            {
+                'name': 'Map by luck'
+            },
+            {
+                'name': 'Map by relevance and surprise'
             },
             {
                 'name': 'Back'
