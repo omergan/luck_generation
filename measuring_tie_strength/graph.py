@@ -14,6 +14,7 @@ class Network(object):
         self.graph = nx.DiGraph() if directed else nx.Graph()
         self.graph.add_edges_from(self.load_connections())
         self.mapping_type = "luck"
+        self.threshold = 100
 
     def load_connections(self):
         connections = db.get_all_connections()

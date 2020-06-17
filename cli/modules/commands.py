@@ -29,16 +29,19 @@ class Commands:
                                 self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
                                 threshold=self.initializer.TSM.network.threshold)
         labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
-                                self.initializer.TSM.network.user_dict)
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
         tsm.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
 
     def run_build_full_graph(self, directed: bool):
         size_map = map_size(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
                             self.initializer.TSM.network.user_dict)
         colors_map = map_colors(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
-                                self.initializer.TSM.network.user_dict)
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
         labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
-                                self.initializer.TSM.network.user_dict)
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
         self.initializer.TSM.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
 
     def run_map_color_by_luck(self, threshold):

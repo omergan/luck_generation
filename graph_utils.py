@@ -41,16 +41,31 @@ def map_size(luck, nodelist, center, user_dict):
         size_map.append(size)
     return size_map
 
-def map_labels(luck, nodelist, center, user_dict):
+def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
+    first_list = list(luck)
+    second_list = list(luck)
+    if type == "luck":
+        first_list.sort(key=lambda x: x['luck'], reverse=True)
+        second_list.sort(key=lambda x: x['luck'], reverse=True)
+    elif type == "relevance_and_surprise":
+        first_list.sort(key=lambda x: x['relevance'], reverse=True)
+        second_list.sort(key=lambda x: x['surprise'], reverse=True)
+
     label_map = {}
     for node in nodelist:
         label = ""
         if node == center.id:
             label = user_dict[node].username
         else:
-            for x in luck:
-                if x['username'] == user_dict[node].username and x['luck'] > 0:
-                    label = x['username']
+            index = 0
+            for x in range(threshold):
+                if user_dict[node].username == first_list[x].get('username'):
+                    label = user_dict[node].username
+                    break
+                elif user_dict[node].username == second_list[x].get('username'):
+                    label = user_dict[node].username
+                    break
+                index += 1
         label_map[node] = label
     return label_map
 
