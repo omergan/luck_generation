@@ -16,6 +16,7 @@ class TieStrengthTool:
         self.limit = limit
         self.customer_data = self.load_user_data(username)
         self.network = None
+        self.threshold = 100
         self.create_network()
 
     def load_user_data(self, user):

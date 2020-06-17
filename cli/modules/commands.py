@@ -26,7 +26,8 @@ class Commands:
         size_map = map_size(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
                             self.initializer.TSM.network.user_dict)
         colors_map = map_colors(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
-                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type)
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
         labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
                                 self.initializer.TSM.network.user_dict)
         tsm.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
@@ -40,10 +41,12 @@ class Commands:
                                 self.initializer.TSM.network.user_dict)
         self.initializer.TSM.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
 
-    def run_map_color_by_luck(self):
+    def run_map_color_by_luck(self, threshold):
         self.initializer.TSM.network.mapping_type = "luck"
-        logger.debug("Mapping type has been changed to luck")
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug("Mapping type has been changed to luck with threshold {}".format(str(threshold)))
 
-    def run_map_color_by_relevance_and_surprise(self):
+    def run_map_color_by_relevance_and_surprise(self, threshold):
         self.initializer.TSM.network.mapping_type = "relevance_and_surprise"
-        logger.debug("Mapping type has been changed to relevance and surprise")
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug("Mapping type has been changed to relevance and surprise with threshold {}".format(str(threshold)))

@@ -65,8 +65,14 @@ class Interface:
         if answer == 'Back':
             return
         if answer == 'Map by luck':
-            self.commands.run_map_color_by_luck()
+            threshold = input("Type luck threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_luck(int(threshold))
             return
         if answer == 'Map by relevance and surprise':
-            self.commands.run_map_color_by_relevance_and_surprise()
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_relevance_and_surprise(int(threshold))
             return
