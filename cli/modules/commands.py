@@ -9,7 +9,7 @@ class Commands:
         pass
 
     def run_online_data_mining(self, online: bool):
-        scrap(self.initializer.options.username)
+        scrap(self.initializer.LG, self.initializer.options.username)
 
     def run_generating_luck_simulation(self, online: bool):
         options = self.initializer.options
