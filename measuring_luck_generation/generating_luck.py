@@ -9,7 +9,7 @@ import pandas as pd
 logger = Logger()
 
 class LuckGenerator:
-    def __init__(self, username, is_online=False, limit=50):
+    def __init__(self, username, is_online=False, limit=200):
         self.online = is_online
         self.limit = limit
         self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps',

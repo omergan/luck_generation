@@ -21,6 +21,9 @@ cli_instructions = [
                 'name': 'Generating luck: Run simulation'
             },
             {
+                'name': 'Generating luck: Online data mining'
+            },
+            {
                 'name': 'Build entire graph'
             },
             {

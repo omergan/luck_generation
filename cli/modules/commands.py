@@ -1,11 +1,15 @@
 from cli.modules.initializer import Initializer
 from graph_utils import filter_topology, map_size, map_colors, map_labels, filter_excel
+from scripts.twint_scripts import scrap
 from utils import Logger
 logger = Logger()
 class Commands:
     def __init__(self, initializer: Initializer):
         self.initializer = initializer
         pass
+
+    def run_online_data_mining(self, online: bool):
+        scrap(self.initializer.options.username)
 
     def run_generating_luck_simulation(self, online: bool):
         options = self.initializer.options

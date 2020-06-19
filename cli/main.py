@@ -12,7 +12,7 @@ logger = Logger()
 @click.option('--username', default='LukeMorton', help="Social network username")
 @click.option('--context', default='Looking for a software engineering job', help='Generate luck in this context')
 @click.option('--network', default='Twitter', help="Input social network for simulation")
-@click.option('--limit', default=10, help='Limit for web scraping')
+@click.option('--limit', default=200, help='Limit for web scraping')
 @click.option('--online', default=False, help='Run simulation online/local')
 def cli(username, context, network, limit, online):
     logger.debug(f'\nCli is initialized with the following params:\nUsername: {username}\nContext: {context}\nNetwork: {network}\nLimit:{limit}\n')

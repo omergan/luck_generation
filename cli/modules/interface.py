@@ -31,6 +31,9 @@ class Interface:
                 online = True if x == 'Y' else False
                 self.commands.run_generating_luck_simulation(online=online)
                 continue
+            if answers['instruction'] == 'Generating luck: Online data mining':
+                self.commands.run_online_data_mining(online=True)
+                continue
             if answers['instruction'] == 'Build entire graph':
                 x = input("Directed? Y/N ")
                 while x != 'Y' and x != 'N':
