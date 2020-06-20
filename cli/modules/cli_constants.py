@@ -51,12 +51,6 @@ build_sub_graph_options = [
                 'name': 'Filter by topology'
             },
             {
-                'name': 'Filter by luck - NOT IMPLMENETED'
-            },
-            {
-                'name': 'Filter by relevance and surprise - NOT IMPLMENETED'
-            },
-            {
                 'name': 'Back'
             },
         ],

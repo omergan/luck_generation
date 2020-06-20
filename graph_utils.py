@@ -1,3 +1,4 @@
+from enums import Info
 def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
     first_list = list(luck)
     second_list = list(luck)
@@ -20,7 +21,10 @@ def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    color_map.append('#FF5733')  # orange - relevance
+                    if type == 'luck':
+                        color_map.append('#FF5733')  # orange - luck
+                    else:
+                        color_map.append('#EEAF29')  # orange - relevance
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
                     color_map.append('#CC41F2')  # pink - surprise
@@ -46,19 +50,19 @@ def map_size(luck, nodelist, center, user_dict, type="luck", threshold=100):
     for i, node in enumerate(nodelist):
         # Set Color
         if node == center.id:
-            size_map.append(350)
+            size_map.append(700)
         else:
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    size_map.append(200)
+                    size_map.append(400)
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
-                    size_map.append(200)
+                    size_map.append(400)
                     break
                 index+=1
             if index >= threshold:
-                size_map.append(10)
+                size_map.append(30)
     return size_map
 
 def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
@@ -77,15 +81,20 @@ def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
     for node in nodelist:
         label = ""
         if node == center.id:
-            label = user_dict[node].username
+            if user_dict[node].username in Info.LABEL:
+                label = Info.LABEL[user_dict[node].username]
+            else:
+                label = user_dict[node].username
         else:
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    label = user_dict[node].username
+                    # label = user_dict[node].username
+                    label = ""
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
-                    label = user_dict[node].username
+                    # label = user_dict[node].username
+                    label = ""
                     break
                 index += 1
         label_map[node] = label
