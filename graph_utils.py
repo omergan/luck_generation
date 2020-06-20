@@ -41,7 +41,6 @@ def map_size(luck, nodelist, center, user_dict, type="luck", threshold=100):
         second_list.sort(key=lambda x: x['surprise'], reverse=True)
 
     size_map = []
-    import pdb; pdb.set_trace()
     show_relevance = (type == 'relevance' or type == 'relevance_and_surprise' or type == 'luck')
     show_surprise = (type == 'surprise' or type == 'relevance_and_surprise')
     for i, node in enumerate(nodelist):
@@ -59,7 +58,7 @@ def map_size(luck, nodelist, center, user_dict, type="luck", threshold=100):
                     break
                 index+=1
             if index >= threshold:
-                size_map.append(30)
+                size_map.append(10)
     return size_map
 
 def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
