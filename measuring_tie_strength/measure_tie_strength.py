@@ -20,7 +20,7 @@ class TieStrengthTool:
         self.create_network()
 
     def load_user_data(self, user):
-        if self.online:
+        if self.online and database_api.get_profile(user) is None:
             twint_api.get_profile_by_username(user)
         user_profile = database_api.get_profile(user)
         data = {'tweets': [], 'favorites': [], 'relevance': {}, 'profile': user_profile}

@@ -1,5 +1,6 @@
 import os
 
+import database_api
 import twint_api
 from measuring_tie_strength.measure_tie_strength import TieStrengthTool
 from measuring_tie_strength.models import User
@@ -22,7 +23,7 @@ class LuckGenerator:
                            'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR', 'code'
                            'coding']
         self.luck = []
-        if self.online:
+        if self.online and database_api.get_profile(username) is None:
             twint_api.get_profile_by_username(username)
         self.user = User(username)
 
