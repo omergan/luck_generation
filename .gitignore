@@ -111,3 +111,4 @@ luck_generation_data_frame.xlsx
 .idea/luck_generation_from_weak_ties.iml
 measuring_luck_generation/.idea/
 .idea/*
+enums.py
