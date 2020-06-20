@@ -50,19 +50,19 @@ def map_size(luck, nodelist, center, user_dict, type="luck", threshold=100):
     for i, node in enumerate(nodelist):
         # Set Color
         if node == center.id:
-            size_map.append(700)
+            size_map.append(350)
         else:
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    size_map.append(400)
+                    size_map.append(200)
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
-                    size_map.append(400)
+                    size_map.append(200)
                     break
                 index+=1
             if index >= threshold:
-                size_map.append(30)
+                size_map.append(10)
     return size_map
 
 def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
