@@ -99,6 +99,6 @@ class LuckGenerator:
 
     def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), './datasets')
-        df.to_excel(os.path.join(path, self.user.username + "- FINAL.xlsx"),  index=None, header=True)
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../datasets')
+        df.to_excel(os.path.join(path, self.user.username + " - FINAL.xlsx"),  index=None, header=True)
 
