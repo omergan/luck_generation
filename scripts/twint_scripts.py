@@ -10,8 +10,7 @@ def scrap(self, username):
         try:
             # twint_api.get_profile_by_username(username)
             customer_profile = database_api.get_profile(username)
-            print(followers)
-            # twint_api.get_followers(customer_profile[0], self.limit)
+            twint_api.get_followers(username, self.limit)
             followers = self.get_candidates(self.strict_set, customer_profile)
             for i, follower in enumerate(followers):
                 logger.debug(f'Scraping a customer direct follower {follower["username"]}')

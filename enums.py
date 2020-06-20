@@ -9,5 +9,6 @@ class Info(object):
         'Charliedysonrec': 'CD',
         'MarianPen': 'MP',
         'MizrahiMichael': 'MM',
-        'LukeMorton': 'LM'
+        'LukeMorton': 'LM',
+        'scimon': 'S.C'
     }
