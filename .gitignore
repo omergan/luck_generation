@@ -112,3 +112,4 @@ luck_generation_data_frame.xlsx
 measuring_luck_generation/.idea/
 .idea/*
 enums.py
+datasets/twitter.db-journal
