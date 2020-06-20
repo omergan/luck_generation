@@ -1,3 +1,5 @@
+import os
+
 import twint_api
 from measuring_tie_strength.measure_tie_strength import TieStrengthTool
 from measuring_tie_strength.models import User
@@ -95,8 +97,8 @@ class LuckGenerator:
         logger.luck(f'Candidates length {len(nodes)}')
         return set(nodes)
 
-    @staticmethod
-    def draw_table(data):
+    def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
-        df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), './datasets')
+        df.to_excel(os.path.join(path, self.user.username + "- FINAL.xlsx"),  index=None, header=True)
 
