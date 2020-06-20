@@ -4,11 +4,13 @@ def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
     if type == "luck":
         first_list.sort(key=lambda x: x['luck'], reverse=True)
         second_list.sort(key=lambda x: x['luck'], reverse=True)
-    elif type == "relevance_and_surprise":
+    elif type in ["relevance_and_surprise", "relevance", "surprise"]:
         first_list.sort(key=lambda x: x['relevance'], reverse=True)
         second_list.sort(key=lambda x: x['surprise'], reverse=True)
 
     color_map = []
+    show_relevance = (type == 'relevance' or type == 'relevance_and_surprise' or type == 'luck')
+    show_surprise = (type == 'surprise' or type == 'relevance_and_surprise')
 
     for i, node in enumerate(nodelist):
         # Set Color
@@ -17,10 +19,10 @@ def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
         else:
             index = 0
             for x in range(threshold):
-                if user_dict[node].username == first_list[x].get('username'):
+                if user_dict[node].username == first_list[x].get('username') and show_relevance:
                     color_map.append('#FF5733')  # orange - relevance
                     break
-                elif user_dict[node].username == second_list[x].get('username'):
+                elif user_dict[node].username == second_list[x].get('username') and show_surprise:
                     color_map.append('#CC41F2')  # pink - surprise
                     break
                 index+=1
@@ -28,17 +30,35 @@ def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
                 color_map.append('#3390FF')
     return color_map
 
-def map_size(luck, nodelist, center, user_dict):
+def map_size(luck, nodelist, center, user_dict, type="luck", threshold=100):
+    first_list = list(luck)
+    second_list = list(luck)
+    if type == "luck":
+        first_list.sort(key=lambda x: x['luck'], reverse=True)
+        second_list.sort(key=lambda x: x['luck'], reverse=True)
+    elif type in ["relevance_and_surprise", "relevance", "surprise"]:
+        first_list.sort(key=lambda x: x['relevance'], reverse=True)
+        second_list.sort(key=lambda x: x['surprise'], reverse=True)
+
     size_map = []
-    for node in nodelist:
-        size = 25
+    show_relevance = (type == 'relevance' or type == 'relevance_and_surprise' or type == 'luck')
+    show_surprise = (type == 'surprise' or type == 'relevance_and_surprise')
+    for i, node in enumerate(nodelist):
+        # Set Color
         if node == center.id:
-            size = 250
+            size_map.append(350)
         else:
-            for x in luck:
-                if x['username'] == user_dict[node].username and x['luck'] > 0:
-                    size = 150
-        size_map.append(size)
+            index = 0
+            for x in range(threshold):
+                if user_dict[node].username == first_list[x].get('username') and show_relevance:
+                    size_map.append(200)
+                    break
+                elif user_dict[node].username == second_list[x].get('username') and show_surprise:
+                    size_map.append(200)
+                    break
+                index+=1
+            if index >= threshold:
+                size_map.append(10)
     return size_map
 
 def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
@@ -47,11 +67,13 @@ def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
     if type == "luck":
         first_list.sort(key=lambda x: x['luck'], reverse=True)
         second_list.sort(key=lambda x: x['luck'], reverse=True)
-    elif type == "relevance_and_surprise":
+    elif type in ["relevance_and_surprise", "relevance", "surprise"]:
         first_list.sort(key=lambda x: x['relevance'], reverse=True)
         second_list.sort(key=lambda x: x['surprise'], reverse=True)
 
     label_map = {}
+    show_relevance = (type == 'relevance' or type == 'relevance_and_surprise' or type == 'luck')
+    show_surprise = (type == 'surprise' or type == 'relevance_and_surprise')
     for node in nodelist:
         label = ""
         if node == center.id:
@@ -59,10 +81,10 @@ def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
         else:
             index = 0
             for x in range(threshold):
-                if user_dict[node].username == first_list[x].get('username'):
+                if user_dict[node].username == first_list[x].get('username') and show_relevance:
                     label = user_dict[node].username
                     break
-                elif user_dict[node].username == second_list[x].get('username'):
+                elif user_dict[node].username == second_list[x].get('username') and show_surprise:
                     label = user_dict[node].username
                     break
                 index += 1
