@@ -78,6 +78,12 @@ choose_color_mapping_options = [
                 'name': 'Map by relevance and surprise'
             },
             {
+                'name': 'Map by relevance'
+            },
+            {
+                'name': 'Map by surprise'
+            },
+            {
                 'name': 'Back'
             },
         ],

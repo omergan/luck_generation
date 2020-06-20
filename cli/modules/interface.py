@@ -79,3 +79,15 @@ class Interface:
                 threshold = input("Type threshold : ")
             self.commands.run_map_color_by_relevance_and_surprise(int(threshold))
             return
+        if answer == 'Map by relevance':
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_relevance(int(threshold))
+            return
+        if answer == 'Map by surprise':
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_surprise(int(threshold))
+            return
