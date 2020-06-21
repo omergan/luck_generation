@@ -1,5 +1,5 @@
 from cli.modules.initializer import Initializer
-from graph_utils import filter_topology, map_size, map_colors, map_labels, filter_excel
+from graph_utils import filter_topology, map_size, map_colors, map_labels, filter_excel, count_parameters
 from scripts.twint_scripts import scrap
 from utils import Logger
 logger = Logger()
@@ -49,6 +49,9 @@ class Commands:
                                 self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
                                 threshold=self.initializer.TSM.network.threshold)
         self.initializer.TSM.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
+
+    def run_count_parameters(self, threshold):
+        count_parameters(self.initializer.EXCEL, self.initializer.LG.user, threshold)
 
     def run_map_color_by_luck(self, threshold):
         self.initializer.TSM.network.mapping_type = "luck"

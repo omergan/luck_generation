@@ -19,8 +19,10 @@ def scrap(self, username, depth=0):
         twint_api.get_profile_by_username(username)
         twint_api.get_tweets_by_username(username, self.limit)
     user = User(username)
-    twint_api.get_followers(username, self.limit)
     followers_ids = database_api.get_all_followers_ids(user.id)
+    if len(followers_ids) < 100:
+        twint_api.get_followers(username, self.limit)
+        followers_ids = database_api.get_all_followers_ids(user.id)
     for i, follower_id in enumerate(followers_ids):
         follower = User(follower_id, is_id=True)
         logger.debug(f'Scraping a customer direct follower {follower.username}')

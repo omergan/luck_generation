@@ -34,20 +34,26 @@ class Interface:
             if answers['instruction'] == 'Generating luck: Online data mining':
                 self.commands.run_online_data_mining(online=True)
                 continue
-            if answers['instruction'] == 'Build entire graph':
+            if answers['instruction'] == 'Tie Strength: Build entire graph':
                 x = input("Directed? Y/N ")
                 while x != 'Y' and x != 'N':
                     x = input("Directed? Y/N ")
                 directed = True if x == 'Y' else False
                 self.commands.run_build_full_graph(directed=directed)
                 continue
-            if answers['instruction'] == 'Build sub graph':
+            if answers['instruction'] == 'Tie Strength: Build sub graph':
                 answers = prompt(constants.build_sub_graph_options, style=constants.cli_style)
                 self.handle_sub_graph_routine(answers['options'])
                 continue
-            if answers['instruction'] == 'Choose color mapping':
+            if answers['instruction'] == 'Tie Strength: Choose color mapping':
                 answers = prompt(constants.choose_color_mapping_options, style=constants.cli_style)
                 self.handle_color_mapping_routine(answers['options'])
+                continue
+            if answers['instruction'] == 'Tie Strength: Count parameters per layer':
+                threshold = input("Type parameter threshold : ")
+                while not threshold.isnumeric():
+                    threshold = input("Type threshold : ")
+                self.commands.run_count_parameters(int(threshold))
                 continue
 
     def handle_sub_graph_routine(self, answer):
