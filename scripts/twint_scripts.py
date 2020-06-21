@@ -17,6 +17,7 @@ def scrap(self, username, depth=0):
         return
     if need_to_be_scrap(self, username):
         twint_api.get_profile_by_username(username)
+        twint_api.get_tweets_by_username(username, self.limit)
     user = User(username)
     twint_api.get_followers(username, self.limit)
     followers_ids = database_api.get_all_followers_ids(user.id)

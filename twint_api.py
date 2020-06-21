@@ -55,7 +55,6 @@ def get_profile_by_username(user_name):
     c.Username = user_name
     c.Store_object = True
     c.Database = TWITTER_DATABASE
-    c.User_full = True
     # c.Hide_output = True
     twint.run.Lookup(c)
 
