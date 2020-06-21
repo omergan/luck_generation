@@ -24,13 +24,16 @@ cli_instructions = [
                 'name': 'Generating luck: Online data mining'
             },
             {
-                'name': 'Build entire graph'
+                'name': 'Tie Strength: Build entire graph'
             },
             {
-                'name': 'Build sub graph'
+                'name': 'Tie Strength: Build sub graph'
             },
             {
-                'name': 'Choose color mapping'
+                'name': 'Tie Strength: Choose color mapping'
+            },
+            {
+                'name': 'Tie Strength: Count parameters per layer'
             },
             {
                 'name': 'Exit'

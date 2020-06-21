@@ -1,4 +1,6 @@
 from enums import Info
+import pandas as pd
+
 def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
     first_list = list(luck)
     second_list = list(luck)
@@ -89,12 +91,12 @@ def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    # label = user_dict[node].username
-                    label = ""
+                    label = user_dict[node].username
+                    # label = ""
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
-                    # label = user_dict[node].username
-                    label = ""
+                    label = user_dict[node].username
+                    # label = ""
                     break
                 index += 1
         label_map[node] = label
@@ -130,3 +132,25 @@ def filter_excel(luck, nodes, user_dict):
             if user['username'] == user_dict[node].username:
                 filtered_luck.append(user)
     return filtered_luck
+
+def count_parameters(data, user, threshold):
+    for parameter in ['luck', 'relevance', 'surprise']:
+
+        # Create count dictionary
+        count = {}
+        data.sort(key=lambda x: x[parameter], reverse=True)
+        for row in range(threshold):
+            topology = data[row].get('topology') - 1
+            if topology in count:
+                count[topology] += 1
+            else:
+                count[topology] = 1
+
+        # Create file
+        list_to_print = []
+        for key in count:
+            total = len([x for x in data if x['topology']-1 == key])
+            list_to_print.append({'topology': key, 'count': count[key], 'total in layer': total})
+        list_to_print.sort(key=lambda x: x['topology'], reverse=False)
+        df = pd.DataFrame.from_dict(list_to_print)
+        df.to_excel(f'{user.username} - {parameter} - count.xlsx', index=None, header=True)
