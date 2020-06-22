@@ -36,6 +36,9 @@ cli_instructions = [
                 'name': 'Tie Strength: Count parameters per layer'
             },
             {
+                'name': 'Tie Strength: Extract qualification data'
+            },
+            {
                 'name': 'Exit'
             },
         ],

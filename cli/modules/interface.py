@@ -55,6 +55,9 @@ class Interface:
                     threshold = input("Type threshold : ")
                 self.commands.run_count_parameters(int(threshold))
                 continue
+            if answers['instruction'] == 'Tie Strength: Extract qualification data':
+                self.commands.run_extract_qualification_data()
+                continue
 
     def handle_sub_graph_routine(self, answer):
         if answer == 'Back':

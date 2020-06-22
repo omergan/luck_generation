@@ -1,5 +1,6 @@
 from enums import Info
 import pandas as pd
+import json
 
 def map_colors(luck, nodelist, center, user_dict, type="luck", threshold=100):
     first_list = list(luck)
@@ -91,12 +92,12 @@ def map_labels(luck, nodelist, center, user_dict, type="luck", threshold=100):
             index = 0
             for x in range(threshold):
                 if user_dict[node].username == first_list[x].get('username') and show_relevance:
-                    label = user_dict[node].username
-                    # label = ""
+                    # label = user_dict[node].username
+                    label = ""
                     break
                 elif user_dict[node].username == second_list[x].get('username') and show_surprise:
-                    label = user_dict[node].username
-                    # label = ""
+                    # label = user_dict[node].username
+                    label = ""
                     break
                 index += 1
         label_map[node] = label
@@ -154,3 +155,20 @@ def count_parameters(data, user, threshold):
         list_to_print.sort(key=lambda x: x['topology'], reverse=False)
         df = pd.DataFrame.from_dict(list_to_print)
         df.to_excel(f'{user.username} - {parameter} - count.xlsx', index=None, header=True)
+
+def extract_qualification(data, user, total):
+    data.sort(key=lambda x: x['relevance'], reverse=True)
+
+    # Create file
+    list_to_print = []
+    for follower in data:
+        follower_set = json.loads(follower['follower set'].replace("'", '"'))
+        count_all = sum(follower_set.values())
+        count_distinct = len(follower_set)
+        all_percentage = 100 * (count_all / total)
+        distinct_percentage = 100 * (count_distinct / total)
+        list_to_print.append({'follower': follower['follower'], 'follower set': follower['follower set'],
+                              'relevance': follower['relevance'], 'count all': count_all, 'count distinct': count_distinct,
+                              'context': total, 'all precentage': all_percentage, 'distinct precentage': distinct_percentage})
+    df = pd.DataFrame.from_dict(list_to_print)
+    df.to_excel(f'{user.username} - qualification.xlsx', index=None, header=True)

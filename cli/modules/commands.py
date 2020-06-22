@@ -1,5 +1,5 @@
 from cli.modules.initializer import Initializer
-from graph_utils import filter_topology, map_size, map_colors, map_labels, filter_excel, count_parameters
+from graph_utils import filter_topology, map_size, map_colors, map_labels, filter_excel, count_parameters, extract_qualification
 from scripts.twint_scripts import scrap
 from utils import Logger
 logger = Logger()
@@ -52,6 +52,12 @@ class Commands:
 
     def run_count_parameters(self, threshold):
         count_parameters(self.initializer.EXCEL, self.initializer.LG.user, threshold)
+        logger.debug("\nAll count files have been created\n")
+
+    def run_extract_qualification_data(self):
+        total = len(self.initializer.LG.strict_set)
+        extract_qualification(self.initializer.EXCEL, self.initializer.LG.user, total)
+        logger.debug("\nQualification data has been extracted to file\n")
 
     def run_map_color_by_luck(self, threshold):
         self.initializer.TSM.network.mapping_type = "luck"
@@ -73,3 +79,4 @@ class Commands:
         self.initializer.TSM.network.mapping_type = "surprise"
         self.initializer.TSM.network.threshold = threshold
         logger.debug("\nMapping type has been changed to surprise with threshold {}\n".format(str(threshold)))
+
