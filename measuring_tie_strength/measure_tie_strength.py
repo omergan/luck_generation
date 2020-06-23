@@ -1,3 +1,5 @@
+import os
+
 import database_api
 import twint_api
 from utils import Logger
@@ -11,7 +13,7 @@ logger.disabled = False
 
 # Contextual Tie Strength Measuring Tool
 class TieStrengthTool:
-    def __init__(self, is_online=False, limit=100, username=None):
+    def __init__(self, is_online=False, limit=10, username=None):
         self.online = is_online
         self.limit = limit
         self.customer_data = self.load_user_data(username)
@@ -102,8 +104,6 @@ class TieStrengthTool:
         for follower in luck_list:
             follower['distance'] = abs(self.measure_topology(user, follower['follower']) - average)
             follower['factored_luck'] = follower['luck'] * abs(self.measure_topology(user, follower['follower']) - average)
-
-
 """
     ANYTHING BELOW THIS SECTION IS DEPRECATED.
     CODE FOUND BELOW MAY BE USEFUL AT SOME POINT.

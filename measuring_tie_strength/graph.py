@@ -2,6 +2,7 @@ import pprint
 from collections import defaultdict
 import matplotlib.pyplot as plt
 import networkx
+import matplotlib.image as mpimg
 import networkx as nx
 import database_api as db
 import pandas as pd
@@ -29,6 +30,8 @@ class Network(object):
         return connections
 
     def draw(self, color_map, size_map, label_map):
+        # pyDot = nx.nx_pydot.to_pydot(self.graph)
+        # png_str = pyDot.create_png('example1_graph.png')
         nx.draw(self.graph, node_color=color_map, with_labels=True, font_size=6, node_size=size_map, labels=label_map)
         plt.show()
 
