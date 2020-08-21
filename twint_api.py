@@ -5,9 +5,9 @@ TWEETS_DATABASE = "datasets/tweets.db"
 TWITTER_DATABASE = "datasets/twitter.db"
 
 
-def get_followers(user_id, limit):
+def get_followers(username, limit):
     c = twint.Config()
-    c.User_id = user_id
+    c.Username = username
     c.Store_object = True
     c.Database = TWITTER_DATABASE
     c.Limit = limit

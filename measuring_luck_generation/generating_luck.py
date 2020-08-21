@@ -1,3 +1,6 @@
+import os
+
+import database_api
 import twint_api
 from measuring_tie_strength.measure_tie_strength import TieStrengthTool
 from measuring_tie_strength.models import User
@@ -9,7 +12,7 @@ import pandas as pd
 logger = Logger()
 
 class LuckGenerator:
-    def __init__(self, username, is_online=False, limit=50):
+    def __init__(self, username, is_online=False, limit=10):
         self.online = is_online
         self.limit = limit
         self.strict_set = ['software', 'engineering', 'developer', 'devops', 'computers', 'algorithm', 'TechOps',
@@ -20,7 +23,7 @@ class LuckGenerator:
                            'machine learning', 'deep learning', 'startup', 'innovation', 'internet', 'IoT', 'VR', 'code'
                            'coding']
         self.luck = []
-        if self.online:
+        if self.online and database_api.get_profile(username) is None:
             twint_api.get_profile_by_username(username)
         self.user = User(username)
 
@@ -95,8 +98,8 @@ class LuckGenerator:
         logger.luck(f'Candidates length {len(nodes)}')
         return set(nodes)
 
-    @staticmethod
-    def draw_table(data):
+    def draw_table(self, data):
         df = pd.DataFrame.from_dict(data)
-        df.to_excel("luck_generation_data_frame.xlsx",  index=None, header=True)
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../datasets')
+        df.to_excel(os.path.join(path, self.user.username + " - FINAL.xlsx"),  index=None, header=True)
 

@@ -21,10 +21,22 @@ cli_instructions = [
                 'name': 'Generating luck: Run simulation'
             },
             {
-                'name': 'Build entire graph'
+                'name': 'Generating luck: Online data mining'
             },
             {
-                'name': 'Build sub graph'
+                'name': 'Tie Strength: Build entire graph'
+            },
+            {
+                'name': 'Tie Strength: Build sub graph'
+            },
+            {
+                'name': 'Tie Strength: Choose color mapping'
+            },
+            {
+                'name': 'Tie Strength: Count parameters per layer'
+            },
+            {
+                'name': 'Tie Strength: Extract qualification data'
             },
             {
                 'name': 'Word Cloud: Generate costumer word cloud'
@@ -51,10 +63,31 @@ build_sub_graph_options = [
                 'name': 'Filter by topology'
             },
             {
-                'name': 'Filter by luck'
+                'name': 'Back'
+            },
+        ],
+        'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True
+    }
+]
+
+choose_color_mapping_options = [
+    {
+        'type': 'list',
+        'message': 'Color mapping options',
+        'name': 'options',
+        'choices': [
+            Separator('= Options menu ='),
+            {
+                'name': 'Map by luck'
             },
             {
-                'name': 'Filter by relevance and surprise'
+                'name': 'Map by relevance and surprise'
+            },
+            {
+                'name': 'Map by relevance'
+            },
+            {
+                'name': 'Map by surprise'
             },
             {
                 'name': 'Back'

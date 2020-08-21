@@ -1,9 +1,13 @@
 from __future__ import print_function, unicode_literals
-
+import traceback
+import sys
 import click
 from cli.modules.commands import Commands
 from PyInquirer import prompt
 import cli.modules.cli_constants as constants
+
+from utils import Logger
+logger = Logger()
 
 class Interface:
 
@@ -11,7 +15,8 @@ class Interface:
         try:
             self.commands = commands
             self.run()
-        except Exception:
+        except Exception as e:
+            traceback.print_exc(file=sys.stdout)
             click.echo("No Windows console found. Are you running cmd.exe?")
 
     def run(self):
@@ -26,14 +31,17 @@ class Interface:
                 online = True if x == 'Y' else False
                 self.commands.run_generating_luck_simulation(online=online)
                 continue
-            if answers['instruction'] == 'Build entire graph':
+            if answers['instruction'] == 'Generating luck: Online data mining':
+                self.commands.run_online_data_mining(online=True)
+                continue
+            if answers['instruction'] == 'Tie Strength: Build entire graph':
                 x = input("Directed? Y/N ")
                 while x != 'Y' and x != 'N':
                     x = input("Directed? Y/N ")
                 directed = True if x == 'Y' else False
                 self.commands.run_build_full_graph(directed=directed)
                 continue
-            if answers['instruction'] == 'Build sub graph':
+            if answers['instruction'] == 'Tie Strength: Build sub graph':
                 answers = prompt(constants.build_sub_graph_options, style=constants.cli_style)
                 self.handle_sub_graph_routine(answers['options'])
                 continue
@@ -69,4 +77,32 @@ class Interface:
         if answer == 'Filter by luck':
             return
         if answer == 'Filter by relevance and surprise':
+            return
+
+    def handle_color_mapping_routine(self, answer):
+        if answer == 'Back':
+            return
+        if answer == 'Map by luck':
+            threshold = input("Type luck threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_luck(int(threshold))
+            return
+        if answer == 'Map by relevance and surprise':
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_relevance_and_surprise(int(threshold))
+            return
+        if answer == 'Map by relevance':
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_relevance(int(threshold))
+            return
+        if answer == 'Map by surprise':
+            threshold = input("Type relevance/surprise threshold : ")
+            while not threshold.isnumeric():
+                threshold = input("Type threshold : ")
+            self.commands.run_map_color_by_surprise(int(threshold))
             return

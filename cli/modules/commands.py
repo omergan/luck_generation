@@ -11,6 +11,9 @@ class Commands:
         self.initializer = initializer
         pass
 
+    def run_online_data_mining(self, online: bool):
+        scrap(self.initializer.LG, self.initializer.options.username, 0)
+
     def run_generating_luck_simulation(self, online: bool):
         options = self.initializer.options
         tsm = self.initializer.TSM
@@ -25,10 +28,60 @@ class Commands:
                                    self.initializer.LG.user, int(topology),
                                    self.initializer.TSM.network.user_dict)
         tsm.network.create_subgraph(filtered)
-        tsm.network.draw()
+        self.initializer.EXCEL = filter_excel(self.initializer.EXCEL, self.initializer.TSM.network.graph,
+                                   self.initializer.TSM.network.user_dict)
+        size_map = map_size(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                            self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        colors_map = map_colors(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        tsm.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
 
     def run_build_full_graph(self, directed: bool):
-        self.initializer.TSM.network.draw()
+        size_map = map_size(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                            self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        colors_map = map_colors(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        labels_map = map_labels(self.initializer.EXCEL, self.initializer.TSM.network.graph, self.initializer.LG.user,
+                                self.initializer.TSM.network.user_dict, type=self.initializer.TSM.network.mapping_type,
+                                threshold=self.initializer.TSM.network.threshold)
+        self.initializer.TSM.network.draw(color_map=colors_map, size_map=size_map, label_map=labels_map)
+
+    def run_count_parameters(self, threshold):
+        count_parameters(self.initializer.EXCEL, self.initializer.LG.user, threshold)
+        logger.debug("\nAll count files have been created\n")
+
+    def run_extract_qualification_data(self):
+        total = len(self.initializer.LG.strict_set)
+        extract_qualification(self.initializer.EXCEL, self.initializer.LG.user, total)
+        logger.debug("\nQualification data has been extracted to file\n")
+
+    def run_map_color_by_luck(self, threshold):
+        self.initializer.TSM.network.mapping_type = "luck"
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug("\nMapping type has been changed to luck with threshold {}\n".format(str(threshold)))
+
+    def run_map_color_by_relevance_and_surprise(self, threshold):
+        self.initializer.TSM.network.mapping_type = "relevance_and_surprise"
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug("\nMapping type has been changed to relevance and surprise with threshold {}\n".format(str(threshold)))
+
+    def run_map_color_by_relevance(self, threshold):
+        self.initializer.TSM.network.mapping_type = "relevance"
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug(
+            "\nMapping type has been changed to relevance with threshold {}\n".format(str(threshold)))
+
+    def run_map_color_by_surprise(self, threshold):
+        self.initializer.TSM.network.mapping_type = "surprise"
+        self.initializer.TSM.network.threshold = threshold
+        logger.debug("\nMapping type has been changed to surprise with threshold {}\n".format(str(threshold)))
 
     def generate_costumer_word_cloud(self):
         costumer_words_as_str: str = self.initializer.EXCEL[0]['customer relevance set']
