@@ -27,6 +27,12 @@ cli_instructions = [
                 'name': 'Build sub graph'
             },
             {
+                'name': 'Word Cloud: Generate costumer word cloud'
+            },
+            {
+                'name': 'Word Cloud: Generate followers word cloud'
+            },
+            {
                 'name': 'Exit'
             },
         ],

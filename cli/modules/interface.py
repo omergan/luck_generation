@@ -37,6 +37,25 @@ class Interface:
                 answers = prompt(constants.build_sub_graph_options, style=constants.cli_style)
                 self.handle_sub_graph_routine(answers['options'])
                 continue
+            if answers['instruction'] == 'Tie Strength: Choose color mapping':
+                answers = prompt(constants.choose_color_mapping_options, style=constants.cli_style)
+                self.handle_color_mapping_routine(answers['options'])
+                continue
+            if answers['instruction'] == 'Tie Strength: Count parameters per layer':
+                threshold = input("Type parameter threshold : ")
+                while not threshold.isnumeric():
+                    threshold = input("Type threshold : ")
+                self.commands.run_count_parameters(int(threshold))
+                continue
+            if answers['instruction'] == 'Tie Strength: Extract qualification data':
+                self.commands.run_extract_qualification_data()
+                continue
+            if answers['instruction'] == 'Word Cloud: Generate costumer word cloud':
+                self.commands.generate_costumer_word_cloud()
+                continue
+            if answers['instruction'] == 'Word Cloud: Generate followers word cloud':
+                self.commands.generate_followers_word_cloud()
+                continue
 
     def handle_sub_graph_routine(self, answer):
         if answer == 'Back':
