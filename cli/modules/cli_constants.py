@@ -45,7 +45,34 @@ cli_instructions = [
                 'name': 'Word Cloud: Generate followers word cloud'
             },
             {
+                'name': 'Word Cloud: Generate followers surprise words cloud'
+            },
+            {
+                'name': 'Word Cloud: Generate 10-best followers words cloud'
+            },
+            {
                 'name': 'Exit'
+            },
+        ],
+        'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True
+    }
+]
+
+build_10_best_followers_word_cloud_options = [
+    {
+        'type': 'list',
+        'message': 'Sub graph options',
+        'name': 'options',
+        'choices': [
+            Separator('= Options menu ='),
+            {
+                'name': 'Surprise'
+            },
+            {
+                'name': 'Relevance'
+            },
+            {
+                'name': 'Back'
             },
         ],
         'validate': lambda answer: 'You must choose at least one instruction.' if len(answer) == 0 else True

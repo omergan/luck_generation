@@ -6,6 +6,15 @@ import requests
 import json
 
 logger = Logger()
+
+
+def add_word_to_set(dest_set, source_set, word):
+    if word in dest_set:
+        dest_set[word] += source_set[word]
+    else:
+        dest_set[word] = source_set[word]
+
+
 class Commands:
     def __init__(self, initializer: Initializer):
         self.initializer = initializer
@@ -99,6 +108,8 @@ class Commands:
             'fontScale': 25,
             'scale': 'linear',
             'padding': 1,
+            'rotation': 1,
+            # 'colors': ["red", "#00ff00", "rgba(0, 0, 255, 1.0)"],
             'removeStopwords': False,
             'minWordLength': 1,
             'text': words,
@@ -139,4 +150,120 @@ class Commands:
         file_name = self.initializer.LG.user.username + '_followers_cloud.png'
 
         with open('datasets/word_clouds/' + file_name, 'wb') as f:
+            f.write(resp.content)
+
+    def generate_followers_surprise_word_cloud(self):
+        surprise_words = {}
+        costumer_words_as_str: str = self.initializer.EXCEL[0]['customer relevance set']
+        costumer_relevance_set = json.loads(costumer_words_as_str.replace("'", '"'))
+        words: str = ''
+        for row in self.initializer.EXCEL:
+            follower_words_as_str: str = row['follower set']
+            follower_relevance_set = json.loads(follower_words_as_str.replace("'", '"'))
+            for key in follower_relevance_set:
+                if key in follower_relevance_set and key not in costumer_relevance_set:
+                    add_word_to_set(surprise_words, follower_relevance_set, key)
+                elif key in costumer_relevance_set and key not in follower_relevance_set:
+                    add_word_to_set(surprise_words, costumer_relevance_set, key)
+
+        for key in surprise_words:
+            for i in range(surprise_words[key]):
+                words += key + " "
+
+        file_name = self.initializer.LG.user.username + '_followers_surprise_words_cloud.png'
+
+        resp = requests.post('https://quickchart.io/wordcloud', json={
+            'format': 'png',
+            'width': 500000,
+            'height': 500000,
+            'fontScale': 1,
+            'scale': 'linear',
+            'padding': 1,
+            'rotation': 1,
+            'minWordLength': 1,
+            'text': words,
+        })
+
+        with open('datasets/word_clouds/followers_surprise_words_clouds/' + file_name, 'wb') as f:
+            f.write(resp.content)
+
+    def generate_10_best_followers_relevance_cloud(self):
+        _sets = []
+        relevance_words = {}
+        words: str = ''
+        for row in self.initializer.EXCEL:
+            follower_words_as_str: str = row['follower set']
+            follower_relevance_set = json.loads(follower_words_as_str.replace("'", '"'))
+            _sets.append(follower_relevance_set)
+
+        _sets.sort(key=lambda x: -len(x))
+
+        for i in range(10):
+            _dict = _sets[i]
+            for key in _dict:
+                add_word_to_set(relevance_words, _dict, key)
+
+        for key in relevance_words:
+            for i in range(relevance_words[key]):
+                words += key + " "
+
+        json_file_name = self.initializer.LG.user.username + '_10_best_followers_relevance_cloud.json'
+        with open('datasets/word_clouds/10_best_followers_relevance/' + json_file_name, 'w') as outfile:
+            json.dump(relevance_words, outfile)
+
+        resp = requests.post('https://quickchart.io/wordcloud', json={
+            'format': 'png',
+            'width': 3000,
+            'height': 3000,
+            'fontScale': 15,
+            'rotation': 1,
+            'scale': 'linear',
+            'text': words,
+        })
+
+        file_name = self.initializer.LG.user.username + '_10_best_followers_relevance_cloud.png'
+        with open('datasets/word_clouds/10_best_followers_relevance/' + file_name, 'wb') as f:
+            f.write(resp.content)
+
+    def generate_10_best_followers_surprise_cloud(self):
+        _sets = []
+        costumer_words_as_str: str = self.initializer.EXCEL[0]['customer relevance set']
+        costumer_relevance_set = json.loads(costumer_words_as_str.replace("'", '"'))
+        surprise_words = {}
+        words: str = ''
+        for row in self.initializer.EXCEL:
+            follower_words_as_str: str = row['follower set']
+            follower_relevance_set = json.loads(follower_words_as_str.replace("'", '"'))
+            _sets.append(follower_relevance_set)
+
+        _sets.sort(key=lambda x: -len(x))
+
+        for i in range(10):
+            _dict = _sets[i]
+            for key in _dict:
+                if key in _dict and key not in costumer_relevance_set:
+                    add_word_to_set(surprise_words, _dict, key)
+                elif key in costumer_relevance_set and key not in _dict:
+                    add_word_to_set(surprise_words, costumer_relevance_set, key)
+
+        for key in surprise_words:
+            for i in range(surprise_words[key]):
+                words += key + " "
+
+        json_file_name = self.initializer.LG.user.username + '_10_best_followers_surprise_cloud.json'
+        with open('datasets/word_clouds/10_best_followers_surprise/' + json_file_name, 'w') as outfile:
+            json.dump(surprise_words, outfile)
+
+        resp = requests.post('https://quickchart.io/wordcloud', json={
+            'format': 'png',
+            'width': 3000,
+            'height': 3000,
+            'fontScale': 15,
+            'rotation': 1,
+            'scale': 'linear',
+            'text': words,
+        })
+
+        file_name = self.initializer.LG.user.username + '_10_best_followers_surprise_cloud.png'
+        with open('datasets/word_clouds/10_best_followers_surprise/' + file_name, 'wb') as f:
             f.write(resp.content)
