@@ -65,22 +65,12 @@ class Interface:
                 self.commands.generate_followers_word_cloud()
                 continue
             if answers['instruction'] == 'Word Cloud: Generate followers surprise words cloud':
-                self.commands.generate_followers_surprise_word_cloud()
-                continue
-            if answers['instruction'] == 'Word Cloud: Generate 10-best followers words cloud':
-                answers = prompt(constants.build_10_best_followers_word_cloud_options, style=constants.cli_style)
-                self.handle_10_best_followers_word_clouds_routine(answers['options'])
+                answers = prompt(constants.build_followers_surprise_word_clouds, style=constants.cli_style)
+                self.handle_build_followers_surprise_word_clouds(answers['options'])
                 continue
 
-    def handle_10_best_followers_word_clouds_routine(self, answer):
-        if answer == 'Back':
-            return
-        if answer == 'Relevance':
-            self.commands.generate_10_best_followers_relevance_cloud()
-            pass
-        if answer == 'Surprise':
-            self.commands.generate_10_best_followers_surprise_cloud()
-            pass
+    def handle_build_followers_surprise_word_clouds(self, answer):
+        self.commands.generate_followers_surprise_word_cloud(answer != 'All')
 
     def handle_sub_graph_routine(self, answer):
         if answer == 'Back':

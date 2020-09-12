@@ -48,9 +48,6 @@ cli_instructions = [
                 'name': 'Word Cloud: Generate followers surprise words cloud'
             },
             {
-                'name': 'Word Cloud: Generate 10-best followers words cloud'
-            },
-            {
                 'name': 'Exit'
             },
         ],
@@ -58,18 +55,18 @@ cli_instructions = [
     }
 ]
 
-build_10_best_followers_word_cloud_options = [
+build_followers_surprise_word_clouds = [
     {
         'type': 'list',
-        'message': 'Sub graph options',
+        'message': 'Followers surprise word clouds options',
         'name': 'options',
         'choices': [
             Separator('= Options menu ='),
             {
-                'name': 'Surprise'
+                'name': 'All'
             },
             {
-                'name': 'Relevance'
+                'name': 'Random'
             },
             {
                 'name': 'Back'
